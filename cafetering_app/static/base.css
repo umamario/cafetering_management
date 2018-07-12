@@ -1,0 +1,33 @@
+
+body{
+    background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    height: 100%;
+    width:100%;
+}
+
+h2 {
+    font-family: 'Amatica SC', cursive;
+    font-size: 48px;
+    text-align: center;
+}
+
+h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 100px;
+    text-align: center;
+
+}
+h3 {
+    text-align: center;
+}
+
+.ali{
+    text-align: center;
+}
+table {
+    border-spacing: 10px;
+    border-collapse: collapse;
+}
