@@ -35,11 +35,15 @@ class Alumno(models.Model):
 
 # Hacer que extienda de users
 class Empleado(models.Model):
+    TIPO_EMPLEADOS = ((1, "Encargado"),
+                      (2, "Camarero"),)
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=30)
     apellido = models.CharField(max_length=30)
-    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE)
+    cafeteria = models.ManyToManyField(Cafeteria, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    tipo_empleado = models.IntegerField(choices=TIPO_EMPLEADOS,
+                                        default=2)
 
 
 # @receiver(post_save, sender=User)
@@ -65,6 +69,7 @@ class Resena(models.Model):
     comentario = models.CharField(max_length=400, null=True, blank=True)
     calificacion = models.IntegerField(null=True, blank=True)
 
+
 class Etiqueta(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=30)
@@ -87,8 +92,8 @@ class Producto(models.Model):
     precio = models.FloatField()
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     imagen = models.ImageField(null=True, blank=True, upload_to='productos/')
-    etiquetas = models.ManyToManyField(Etiqueta, null=True, blank=True)
-    alergenos = models.ManyToManyField(Alergeno, null=True, blank=True)
+    etiquetas = models.ManyToManyField(Etiqueta, blank=True)
+    alergenos = models.ManyToManyField(Alergeno, blank=True)
 
 
 class Oferta(models.Model):
@@ -129,7 +134,7 @@ class Pedido(models.Model):
         default=EN_COLA,
     )
     productos = models.ManyToManyField(Producto)
-    menus = models.ManyToManyField(Menu, null=True, related_name='menus')
+    menus = models.ManyToManyField(Menu, related_name='menus')
     ofertas = models.ManyToManyField(Menu, related_name='ofertas')
     fecha_creacion = models.DateTimeField(default=timezone.now)
     recogida_estimada = models.DateField()
