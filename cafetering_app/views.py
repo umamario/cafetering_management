@@ -11,7 +11,7 @@ def logout_view(request):
     return redirect(login_view)
 
 
-@login_required
+# @login_required
 def index(request):
     return render(request, 'index.html')
 
@@ -32,28 +32,19 @@ def login_view(request):
     else:
         return render(request, 'login.html', {'login_incorrect': False})
 
-# def register_view(request):
-#     from cafetering_app.forms import RegistrationForm
-#     if request.method == 'GET':
-#         form = RegistrationForm()
-#         return render(request, 'registration.html', {'form': form})
-#     else:
-#         form = RegistrationForm(request.POST)
-#         if form.is_valid():
-#             profile = Profile()
-#             # trade.created_time = datetime.datetime.now()
-#             profile.birth_date = form.cleaned_data['birth_date']
-#             profile.gender = form.cleaned_data['gender']
-#             profile.level_study = form.cleaned_data['level_study']
-#             profile.name = form.cleaned_data['name']
-#             profile.status = form.cleaned_data['status']
-#             email = form.cleaned_data['email']
-#             password = User.objects.make_random_password()
-#             user = User.objects.create(username=email,
-#                                        email=email, password=password)
-#             profile.user = user
-#             profile.save()
-#
-#             return redirect(index)
-#         else:
-#             return render(request, 'new_trade.html', {'form': form})
+
+def register_view(request):
+    if request.method == 'GET':
+        return render(request, 'register.html')
+    else:
+        user = User()
+        user.name = request.POST.get('empleado[first_name]', ' ')
+        user.last_name = request.POST.get('empleado[last_name]', ' ')
+        user.email = request.POST.get('empleado[email]', ' ')
+        user.set_password(request.POST.get('empleado[password]', ' '))
+        user.save()
+        empleado = Empleado(name=user.name, apellido=user.last_name,
+                            user=user)
+        empleado.save()
+
+        return redirect(index)

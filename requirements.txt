@@ -2,3 +2,6 @@ Django==1.9.7
 django_extensions==1.6.7
 requests==2.11.1
 django_rest_framework==0.1.0
+django-fsm==2.6.0 # https://hashedin.com/blog/a-guide-to-managing-finite-state-machine-using-django-fsm/
+django-fsm-log==1.5.0 # python manage.py migrate django_fsm_log ; https://github.com/gizmag/django-fsm-log
+

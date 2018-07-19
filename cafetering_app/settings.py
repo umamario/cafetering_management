@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_extensions',
     'bos',
+    'django_fsm',
+    'django_fsm_log',
     'cafetering_app'
 ]
 
