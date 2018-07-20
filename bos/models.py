@@ -3,6 +3,11 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django_fsm import FSMField, transition
 
+ESTADO_CHOICES = (
+    ('0', 'Inactivo'),
+    ('1', 'Activo'),
+)
+
 
 class Universidad(models.Model):
     id = models.AutoField(primary_key=True)
@@ -66,6 +71,7 @@ class Producto(models.Model):
     alergenos = models.ManyToManyField(Alergeno, blank=True)
     precio_oferta = models.FloatField(null=True, blank=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
+    estado = models.CharField(default='0', choices=ESTADO_CHOICES)
 
 
 class Categoria(models.Model):
@@ -73,6 +79,7 @@ class Categoria(models.Model):
     nombre = models.CharField(max_length=30)
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     productos = models.ManyToManyField(Producto)
+    estado = models.CharField(default='0', choices=ESTADO_CHOICES)
 
 
 class Resena(models.Model):
@@ -92,6 +99,7 @@ class Oferta(models.Model):
     productos = models.ManyToManyField(Producto)
     imagen = models.ImageField(upload_to='oferta/', null=True, blank=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
+    estado = models.CharField(default='0', choices=ESTADO_CHOICES)
 
     def save(self, *args, **kwargs):
         super(Oferta, self).save(*args, **kwargs)
@@ -111,7 +119,7 @@ class Menu(models.Model):
     nombre = models.CharField(max_length=30)
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     productos = models.ManyToManyField(Producto)
-
+    estado = models.CharField(default='0', choices=ESTADO_CHOICES)
 
 
 STATES = ('En cola', 'En proceso', 'Preparado', 'Entregado', 'No recogido', 'Cancelado')
