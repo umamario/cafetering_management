@@ -80,6 +80,7 @@ class Categoria(models.Model):
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     productos = models.ManyToManyField(Producto)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
+    imagen = models.ImageField(upload_to='categoria/', null=True, blank=True)
 
 
 class Resena(models.Model):
@@ -100,6 +101,8 @@ class Oferta(models.Model):
     imagen = models.ImageField(upload_to='oferta/', null=True, blank=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
+    valido_desde = models.DateTimeField(default=timezone.now)
+    valido_hasta = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super(Oferta, self).save(*args, **kwargs)
@@ -120,6 +123,7 @@ class Menu(models.Model):
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     productos = models.ManyToManyField(Producto)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
+    imagen = models.ImageField(upload_to='menu/', null=True, blank=True)
 
 
 STATES = ('En cola', 'En proceso', 'Preparado', 'Entregado', 'No recogido', 'Cancelado')
