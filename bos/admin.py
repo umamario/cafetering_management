@@ -2,6 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import *
+from django_fsm_log.models import StateLog
 
 admin.site.register(Universidad)
 admin.site.register(Cafeteria)
@@ -14,3 +15,8 @@ admin.site.register(Producto)
 admin.site.register(Oferta)
 admin.site.register(Menu)
 admin.site.register(Pedido)
+admin.site.register(Categoria)
+admin.site.register(ProductoPedido)
+admin.site.register(MenuPedido)
+admin.site.register(OfertaPedido)
+admin.site.register(StateLog)

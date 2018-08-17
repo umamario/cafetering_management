@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% block content %}
+
+	<!-- Main Content -->
+	<div class="page-container" id="PageContainer">
+		<main class="main-content" id="MainContent" role="main">
+			<section class="heading-content">
+				<div class="heading-wrapper">
+					<div class="container">
+						<div class="row">
+							<div class="page-heading-inner heading-group">
+								<div class="breadcrumb-group">
+									<h1 class="hidden">Order History</h1>
+									<div class="breadcrumb clearfix">
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="./index.html" title="Fast Food" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a>
+										</span>
+										<span class="arrow-space"></span>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+											<a href="./order.html" title="Order History" itemprop="url"><span itemprop="title">Order History</span></a>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="order-layout">
+				<div class="order-wrapper">
+                    <form method="post">{% csrf_token %}
+					    <div class="container">
+						<div class="row">
+							<div class="order-inner">
+								<div class="order-content">
+									<div class="order-id">
+										<h2>Order #{{ pedido.id }}</h2>
+										<span class="date">{{ pedido.fecha_creacion }}</span>
+										<!--<div id="order-cancelled" class="flash notice">
+											<h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
+											<span class="note">Reason: customer</span>
+										</div>-->
+									</div>
+                                <div id="content1"><button type="button" class="btn btn-default" style="margin:auto; display:block;">Marcar como recogido</button></div>
+                                <div id="content2"><button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/cancelar-pedido/{{pedido.id}}'">Cancelar pedido</button></div>
+									<div class="order-address">
+										<div id="order_payment" class="col-md-6 address-items">
+											<h2 class="address-title">QR CODE</h2>
+											<div class="address-content">
+                                                <img src="{{ pedido.qr.url }}">
+                                                	<div class="address-item">
+                                                        <span class="title">Confirmación</span>
+                                                        <span class="content">{{ pedido.codigo_confirmacion }}</span>
+												    </div>
+											</div>
+										</div>
+
+										<div id="order_shipping" class="col-md-6 address-items">
+                                                <h2 class="address-title">Datos del pedido</h2>
+                                                <div class="address-content">
+                                                    <div class="address-item name">
+                                                        <span class="title">Estado</span>
+
+                                                        <span class="content">
+                                                              <select name="estado" class="form-control" id="sel1">
+                                                                {% for estado in estados %}
+                                                                        {% if pedido.get_estado_display == estado %}
+                                                                            <option selected>{{ estado }}</option>
+                                                                        {% else %}
+                                                                            <option>{{ estado }}</option>
+                                                                        {% endif %}
+                                                                {% endfor %}
+                                                              </select>
+                                                        </span>
+                                                    </div>
+                                                    <div class="address-item name">
+                                                        <span class="title">Recogida estimada</span>
+                                                        <span class="content">
+                                                        <div class="container">
+                                                        <div class="row">
+                                                            <div class='col-sm-2'>
+                                                                <div class="">
+                                                                    <div class='input-group date' id='datetimepicker1'>
+                                                                        <input type='text' name="recogida_estimada" value="{{ pedido.recogida_estimada|date:'d/m/y H:i' }}" class="form-control"/>
+                                                                        <!--  2012-06-15 14:45 -->
+                                                                        <span class="input-group-addon">
+                                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                        </span>
+                                                        </div>
+
+                                                    <div class="address-item name">
+                                                        <span class="title">Recogida</span>
+                                                        {% if pedido.fecha_recogida %}
+                                                            <span class="content">{{ pedido.fecha_recogida|date:'D, d N H:i:s' }}</span>
+                                                        {% else %}
+                                                            <span class="content">No recogido</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="address-item">
+                                                        <span class="title">Alumno/s</span>
+                                                        <span class="content">
+                                                        {% for alumno in alumnos %}
+                                                            #{{ alumno.id}} {{ alumno.user.get_full_name }}
+                                                            <br>
+                                                        {% endfor %}
+                                                        </span>
+                                                    </div>
+                                                    <div class="address-item">
+                                                        <span class="title">Telefono</span>
+                                                        <span class="content">
+                                                            {% for alumno in alumnos %}
+                                                                #{{ alumno.id}} ---> {{ alumno.telefono }}
+                                                                <br>
+                                                            {% endfor %}
+                                                        </span>
+                                                    </div>
+                                                    <div class="address-item">
+                                                        <span class="title">Reseña</span>
+                                                        {% if pedido.hasResena %}
+                                                            <span class="content">Recibida</span>
+                                                        {% else %}
+                                                            <span class="content">No recibida</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+										</div>
+									</div>
+{#                                    <div class="order-address">#}
+{#										<div id="order_payment" class="col-md-6 address-items">#}
+{#											<h2 class="address-title">Ofertas Seleccionadas</h2>#}
+{#											{% for oferta in ofertas %}#}
+{#                                                <div class="address-content">#}
+{#                                                    <div class="address-item">#}
+{#                                                        <span class="title"><input name="oferta-pedido-cantidad-{{ oferta.id }}" step="any" min="0" type="number" style="max-width: 25%; padding: 0px 0px" value="{{ oferta.quantity }}"></span>#}
+{#                                                        <span class="content">{{ oferta.oferta.titulo }}</span>#}
+{#                                                    </div>#}
+{#                                                </div>#}
+{#                                            {% endfor %}#}
+{#										</div>#}
+{#										<div id="order_payment" class="col-md-6 address-items">#}
+{#											<h2 class="address-title">Menus Seleccionados</h2>#}
+{#											{% for menu in menus %}#}
+{#                                                <div class="address-content">#}
+{#                                                    <div class="address-item">#}
+{#                                                        <span class="title"><input name="menu-pedido-cantidad-{{ menu.id }}" step="any" min="0" type="number" style="max-width: 25%; padding: 0px 0px" value="{{ menu.quantity }}"></span>#}
+{#                                                        <span class="content">{{ menu.menu.nombre }}</span>#}
+{#                                                    </div>#}
+{#                                                </div>#}
+{#                                            {% endfor %}#}
+{#										</div>#}
+{#									</div>#}
+									<div class="order-info">
+										<div class="order-info-inner">
+											<table id="order_details">
+												<thead>
+													<tr>
+														<th>Producto</th>
+														<th>Precio</th>
+														<th class="center" align="center">Cantidad</th>
+														<th class="total">Subtotal</th>
+                                                        <th>Acciones</th>
+													</tr>
+												</thead>
+												<tbody>
+                                                    {% for menu in menus %}
+                                                        <tr id="fila-{{ menu.menu.id }}" class="odd">
+                                                            <td class="td-product">
+                                                                <a align="center" title="">MENU: {{ menu.menu.nombre }}</a>
+                                                            </td>
+                                                            <td class="money"><span class="money" data-currency="EUR">{{ menu.precio_menu }}€</span></td>
+                                                            <td class="quantity" align="left"><input name="menu-pedido-cantidad-{{ menu.id }}" step="any" type="number" id="producto-{{ menu.menu.id }}" min="0" style="max-width: 23%; padding: 0px 0px" value="{{ menu.quantity }}"></td>
+
+                                                            <td class="total" align="center"><span class="money" data-currency="EUR">{{ menu.subtotal }}€</span></td>
+                                                            <td>
+                                                                <button type="button" onclick="setZero({{ menu.menu.id }})" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    {% for oferta in ofertas %}
+                                                        <tr id="fila-{{ oferta.oferta.id }}" class="odd">
+                                                            <td class="td-product">
+                                                                <a align="center" title="">OFERTA: {{ oferta.oferta.titulo }}</a>
+                                                            </td>
+                                                            <td class="money"><span class="money" data-currency="EUR">{{ oferta.precio_oferta }}€</span></td>
+                                                            <td class="quantity" align="left"><input name="oferta-pedido-cantidad-{{ oferta.id }}" step="any" type="number" id="producto-{{ oferta.oferta.id }}" min="0" style="max-width: 23%; padding: 0px 0px" value="{{ oferta.quantity }}"></td>
+
+                                                            <td class="total" align="center"><span class="money" data-currency="EUR">{{ oferta.subtotal }}€</span></td>
+                                                            <td>
+                                                                <button type="button" onclick="setZero({{ oferta.oferta.id }})" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    {% for producto in productos %}
+                                                        <tr id="fila-{{ producto.producto.id }}" class="odd">
+                                                            <td class="td-product">
+                                                                <a align="center" title="">{{ producto.producto.nombre }}</a>
+                                                            </td>
+                                                            <td class="money"><span class="money" data-currency="EUR">{{ producto.precio_producto }}€</span></td>
+                                                            <td class="quantity" align="left"><input name="producto-pedido-cantidad-{{ producto.id }}" step="any" type="number" id="producto-{{ producto.producto.id }}" min="0" style="max-width: 21%; padding: 0px 0px" value="{{ producto.quantity }}"></td>
+
+                                                            <td class="total" align="center"><span class="money" data-currency="EUR">{{ producto.subtotal }}€</span></td>
+                                                            <td>
+                                                                <button type="button" onclick="setZero({{ producto.producto.id }})" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+												</tbody>
+												<tfoot>
+													<tr class="order_summary order_total">
+														<td class="td-label" colspan="4">Total</td>
+														<td class="total"><span class="money" align="center" data-currency="EUR">{{ pedido.importe_total }}€</span></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+                                <br><br>
+                                    <button type="submit" class="btn btn-default" style="margin:auto; display:block;" >Guardar</button><br><br>
+								</div>
+							</div>
+						</div>
+					</div>
+                    </form>
+				</div>
+			</section>
+		</main>
+	</div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+      <h2>Historico de estados</h2>
+    </div>
+    <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Fecha</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Usuario</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for statelog in statelogs %}
+                <tr>
+                  <th scope="row">{{ statelog.timestamp }}</th>
+                  <td>{{ statelog.state}}</td>
+                  <td>@{{ statelog.by.username }}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+
+    </div>
+    </div>
+
+    </div>
+
+    <script>
+    // Get the modal
+    var modal = document.getElementById('myModal');
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("historic_button");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
+    modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+    modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+    }
+    </script>
+
+    <style>
+    table {
+    border-collapse: collapse;
+    }
+
+    td {
+        position: relative;
+        padding: 5px 10px;
+    }
+
+    tr.strikeout td:before {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        border-bottom: 1px solid #111;
+        width: 100%;
+    }
+{#    * {#}
+{#	padding: 0; margin: 0;	#}
+{#    }#}
+    html {
+        height: 100.1&#37;;
+    }
+    </style>
+{% endblock content %}

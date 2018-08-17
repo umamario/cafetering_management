@@ -1,4 +1,4 @@
-{% extends 'base_index.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
 	<!-- Main Content -->
@@ -12,9 +12,12 @@
 								<div class="customers-content">
 									<div id="login" class="customers">
 										<h2>Login</h2>
-										<form method="post" action="./account.html" accept-charset="UTF-8">
+										<form method="post" accept-charset="UTF-8"> {% csrf_token %}
+                                            {% if login_incorrect %}
+                                                <p class="message">El usuario o la contraseña no son correctas</p>
+                                            {% endif %}
 											<div class="clearfix large_form form-item">
-												<input type="email" value="" placeholder="Email Address" name="customer[email]" id="customer_email" class="text">
+												<input type="text" value="" placeholder="Username" name="customer[username]" id="customer_username" class="text">
 											</div>
 											<div class="clearfix large_form form-item form-password">
 												<input type="password" value="" placeholder="Password" name="customer[password]" id="customer_password" class="text" size="16">
@@ -28,14 +31,14 @@
 											</div>
 										</form>
 										<div class="create-account">
-											<h4>You don't have account?</h4>
-											<a href="./register.html" class="_btn">Create account now</a>
+											<h4>¿Aún no tienes una cuenta?</h4>
+											<a href="./contacta" class="_btn">Contáctanos</a>
 										</div>
 									</div>
 									<div id="recover-password" style="display:none;" class="customers">
 										<h2>Reset Password</h2>
 										<p class="note">We will send you an email to reset your password.</p>
-										<form method="post" action="./login.html" accept-charset="UTF-8">
+										<form method="post" action="./reset_password" accept-charset="UTF-8"> {% csrf_token %}
 											<div class="clearfix large_form form-item">
 												<input type="email" value="" placeholder="Email Address" size="30" name="email" id="recover-email" class="text">
 											</div>

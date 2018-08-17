@@ -1,33 +1,81 @@
 
-body{
-    background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
-    -o-background-size: cover;
-    height: 100%;
-    width:100%;
+#holder {
+    border: 10px dashed #ccc;
+    width: 218px;
+    min-height: 218px;
+    margin: 20px auto;
 }
 
-h2 {
-    font-family: 'Amatica SC', cursive;
-    font-size: 48px;
-    text-align: center;
+#holder.hover {
+    border: 10px dashed #0c0;
 }
 
-h1 {
-    font-family: 'Pacifico', cursive;
-    font-size: 100px;
-    text-align: center;
-
-}
-h3 {
-    text-align: center;
+#holder img {
+    display: block;
+    margin: 10px auto;
 }
 
-.ali{
-    text-align: center;
+#holder p {
+    margin: 10px;
+    font-size: 14px;
 }
+
+progress {
+    width: 100%;
+}
+
+progress:after {
+    content: '%';
+}
+
+.fail {
+    background: #c00;
+    padding: 2px;
+    color: #fff;
+}
+
+.hidden {
+    display: none !important;
+}
+
 table {
-    border-spacing: 10px;
     border-collapse: collapse;
 }
+
+td {
+    position: relative;
+    padding: 5px 10px;
+}
+
+tr.strikeout td:before {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    border-bottom: 1px solid #111;
+    width: 100%;
+}
+
+html {
+    height: 100.1 & #37;;
+}
+
+#content1 {
+    float: left;
+    width: 50%;
+}
+
+#content2 {
+    float: right;
+    width: 50%;
+}
+
+.trio > div {
+    display: inline-block;
+    *display: inline; /* For IE7 */
+    zoom: 1; /* Trigger hasLayout */
+    width: 33%;
+    text-align: center;
+    background-color: white;
+}
+

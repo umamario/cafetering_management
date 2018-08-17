@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django_fsm import FSMField, transition
+from django.core.validators import RegexValidator
 
 ESTADO_CHOICES = (
     (0, 'Inactivo'),
@@ -23,6 +24,10 @@ class Cafeteria(models.Model):
 
 class Alumno(models.Model):
     id = models.AutoField(primary_key=True)
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
+                                 message="El telefono debe tener el formato: '+999999999'. Maximo 15 digitos.")
+    telefono = models.CharField(validators=[phone_regex], max_length=17, blank=True,
+                                null=True)
     fecha_nacimiento = models.DateField()
     universidad = models.ForeignKey(Universidad, on_delete=models.CASCADE)
     cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE)
@@ -102,19 +107,23 @@ class Oferta(models.Model):
     fecha_creacion = models.DateTimeField(default=timezone.now)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     valido_desde = models.DateTimeField(default=timezone.now)
-    valido_hasta = models.DateTimeField(null=True, blank=True)
+    valido_hasta = models.DateField(null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        super(Oferta, self).save(*args, **kwargs)
+    def setPrecioOferta(self):
         for product in self.productos.all():  # It does not work when the offer is created from admin
             if self.descuento_porcentual:
-                product.precio_oferta = product.precio * (1 - self.descuento_porcentual / 100)
+                product.precio_oferta = product.precio * (1 - (float(self.descuento_porcentual) / 100))
                 product.save()
             elif self.descuento_numerico:
-                product.precio_oferta = product.precio - self.descuento_numerico
+                product.precio_oferta = product.precio - (float(self.descuento_numerico) / self.productos.count())
                 product.save()
             else:
                 raise ValueError('Offer does not have discount set for PRODUCT ID %d' % producto.id)
+
+    def save(self, *args, **kwargs):
+        super(Oferta, self).save(*args, **kwargs)
+        if self.descuento_porcentual or self.descuento_numerico:
+            self.setPrecioOferta()
 
 
 class Menu(models.Model):
@@ -124,24 +133,59 @@ class Menu(models.Model):
     productos = models.ManyToManyField(Producto)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     imagen = models.ImageField(upload_to='menu/', null=True, blank=True)
+    precio = models.FloatField(null=True, blank=True)
+    valido_hasta = models.DateField(null=True, blank=True)
 
-
-STATES = ('En cola', 'En proceso', 'Preparado', 'Entregado', 'No recogido', 'Cancelado')
-STATES = list(zip(STATES, STATES))
+STATES_STR = ('En cola', 'En proceso', 'Preparado', 'Entregado', 'No recogido', 'Cancelado')
+STATES = list(zip(STATES_STR, STATES_STR))
 
 
 class Pedido(models.Model):
     id = models.AutoField(primary_key=True)
     estado = FSMField(default=STATES[0], choices=STATES)
-    productos = models.ManyToManyField(Producto)
-    menus = models.ManyToManyField(Menu, related_name='menus')
-    ofertas = models.ManyToManyField(Menu, related_name='ofertas')
+    productos = models.ManyToManyField(Producto, through='ProductoPedido')
+    menus = models.ManyToManyField(Menu, through='MenuPedido')
+    ofertas = models.ManyToManyField(Oferta, through='OfertaPedido')
     fecha_creacion = models.DateTimeField(default=timezone.now)
-    recogida_estimada = models.DateField()
-    fecha_recogida = models.DateField(null=True, blank=True)
+    recogida_estimada = models.DateTimeField()
+    fecha_recogida = models.DateTimeField(null=True, blank=True)
     qr = models.ImageField(upload_to='qr/', null=True, blank=True)
     ordenante = models.ManyToManyField(Alumno, related_name='alumnos')
     resenas = models.ManyToManyField(Resena, blank=True)
+    importe = models.FloatField(null=True, blank=True)
+    codigo_confirmacion = models.CharField(unique=True, max_length=10)
+
+    @property
+    def hasResena(self):
+        return self.resenas.exists()
+
+    @property
+    def importe_productos(self):
+        productos = self.productopedido_set.all()
+        total = 0.0
+        for producto in productos:
+            total += producto.subtotal
+        return total
+
+    @property
+    def importe_ofertas(self):
+        ofertas = self.ofertapedido_set.all()
+        total = 0.0
+        for oferta in ofertas:
+            total += oferta.subtotal
+        return total
+
+    @property
+    def importe_menus(self):
+        menus = self.menupedido_set.all()
+        total = 0.0
+        for menu in menus:
+            total += menu.subtotal
+        return total
+
+    @property
+    def importe_total(self):
+        return self.importe_productos + self.importe_ofertas + self.importe_menus
 
     @transition(field=estado, source=['En cola'], target='En proceso')
     def start(self):
@@ -159,3 +203,36 @@ class Pedido(models.Model):
             Help on https://hashedin.com/blog/a-guide-to-managing-finite-state-machine-using-django-fsm/
         """
         pass
+
+
+class ProductoPedido(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    precio_producto = models.FloatField(null=True, blank=True)
+
+    @property
+    def subtotal(self):
+        return self.precio_producto * self.quantity
+
+
+class MenuPedido(models.Model):
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    precio_menu = models.FloatField(null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def subtotal(self):
+        return self.precio_menu * self.quantity
+
+
+class OfertaPedido(models.Model):
+    oferta = models.ForeignKey(Oferta, on_delete=models.CASCADE)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    precio_oferta = models.FloatField(null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def subtotal(self):
+        return self.precio_oferta * self.quantity

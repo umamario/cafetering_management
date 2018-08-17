@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load main_tags %}
+
+
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="page-container" id="PageContainer">
+        <main class="main-content" id="MainContent" role="main">
+            <section class="heading-content">
+                <div class="heading-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="page-heading-inner heading-group">
+                                <div class="breadcrumb-group">
+                                    <h1 class="hidden">My Account</h1>
+                                    <div class="breadcrumb clearfix">
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                itemprop="title"><i class="fa fa-home"></i></span></a>
+										</span>
+                                        <span class="arrow-space"></span>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+											<a href="./account.html" title="My Account" itemprop="url"><span
+                                                    itemprop="title">Pedidos</span></a>
+										</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="account-layout">
+                <div class="account-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="account-inner">
+                                <div class="account-content">
+                                    <div class="account-orders">
+                                        <div class="account-orders-inner">
+                                            <button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/nuevo-pedido'">Crear nuevo</button><br><br>
+                                            <table>
+                                                <thead>
+                                                <tr>
+                                                    <th class="order_number">Pedido</th>
+                                                    <th class="date">Estado</th>
+                                                    <th class="payment_status">Fecha estimada</th>
+                                                    <th class="fulfillment_status">Importe/s</th>
+                                                    <th class="total">Acciones</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for pedido in pedidos %}
+                                                    <tr class="odd cancelled_order">
+                                                        <td class="td-name"><a href="./order.html" title="">{{ pedido.id}}</a></td>
+                                                        <td class="td-note"><span class="note">{{ pedido.estado }}</span></td>
+                                                        <td class="td-authorized"><span class="status_voided">{{ pedido.recogida_estimada }}</span>
+                                                        </td>
+                                                        <td class="td-total"><span class="total"><span class="money"
+                                                                                                       data-currency-usd="$6,277.80">{{ pedido.importe }}€</span></span>
+                                                        </td>
+
+
+                                                        <td>
+                                                             <button type="button" onclick="location.href='/ver-pedido/{{pedido.id}}'" class="btn btn-default">
+                                                                <span class="glyphicon glyphicon-eye-open"></span>
+                                                            </button>
+                                                            {% if not pedido.estado|estaCompleto %}
+                                                                 <button type="button" onclick="location.href='/cancelar-pedido/{{pedido.id}}'" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+{% endblock content %}

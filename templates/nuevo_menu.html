@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="page-container" id="PageContainer">
+        <main class="main-content" id="MainContent" role="main">
+            <section class="heading-content">
+                <div class="heading-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="page-heading-inner heading-group">
+                                <div class="breadcrumb-group">
+                                    <h1 class="hidden">Nuevo Menu</h1>
+                                    <div class="breadcrumb clearfix">
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                itemprop="title"><i class="fa fa-home"></i></span></a>
+										</span>
+                                        <span class="arrow-space"></span>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+											<a title="Nuevo menu" itemprop="url"><span itemprop="title">Nuevo menu</span></a>
+										</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="order-layout">
+                <div class="order-wrapper">
+                    <form method="post" id="main_form" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="container">
+                            <div class="row">
+                                <div class="order-inner">
+                                    <div class="order-content">
+                                        {#									<div class="order-id">#}
+                                        {#										<h2>Order #{{ pedido.id }}</h2>#}
+                                        {#										<span class="date">{{ pedido.fecha_creacion }}</span>#}
+                                        <!--<div id="order-cancelled" class="flash notice">
+                                            <h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
+                                            <span class="note">Reason: customer</span>
+                                        </div>-->
+                                        {#									</div>#}
+                                        {#                                <div id="content1"><button type="button" class="btn btn-default" style="margin:auto; display:block;">Marcar como recogido</button></div>#}
+                                        {#                                <div id="content2"><button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/cancelar-pedido/{{pedido.id}}'">Cancelar pedido</button></div>#}
+                                        <div class="order-address">
+                                            <div id="order_payment" class="col-md-6 address-items">
+                                                <h2 class="address-title">Imagen</h2>
+                                                <div class="address-content">
+                                                    <div id="holder"></div>
+                                                    {#                                                <p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>#}
+                                                    <p id="upload"><input type="file" name="upload_field_classic"></p>
+                                                    <p id="filereader">File API & FileReader API not supported</p>
+                                                    <p id="formdata">XHR2's FormData is not supported</p>
+                                                    <p id="progress">XHR2's upload progress isn't supported</p>
+                                                    {#                                                      <p>Upload progress: <progress id="uploadprogress" max="100" value="0">0</progress></p>#}
+                                                    {#                                                <img src="{{ pedido.qr.url }}">#}
+                                                    <div class="address-item">
+                                                        {#                                                        <span class="title">Confirmación</span>#}
+                                                        {#                                                        <span class="content">{{ pedido.codigo_confirmacion }}</span>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="order_shipping" class="col-md-6 address-items">
+                                                <h2 class="address-title">Datos</h2>
+                                                <div class="address-content">
+                                                    <div class="address-item name">
+                                                        <span class="title">Estado</span>
+
+                                                        <span class="content">
+                                                              <select name="estado" class="form-control" id="estado_id">
+                                                                    <option selected>Activado</option>
+                                                                    <option>Desactivado</option>
+                                                              </select>
+                                                        </span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label><h4 align="center">Nombre</h4></label>
+                                                        <input type="text" name="nombre" class="form-control"
+                                                               id="exampleInputPassword1" style="height: 32px"
+                                                               placeholder="Escriba el titulo" maxlength="30">
+                                                        <label><h4 align="center">Descripción</h4></label>
+                                                        <textarea class="form-control" id="exampleFormControlTextarea1"
+                                                                  name="descripcion"
+                                                                  placeholder="Escriba la descripción" rows="3"
+                                                                  maxlength="200"></textarea>
+                                                        <br>
+                                                        <div>
+                                                            <input id="content1" type="text" name="valido_hasta" style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" class="datepicker" placeholder="Valido hasta">
+                                                            <input id="content2" type="number" name="precio" style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" placeholder="Precio">
+                                                         </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="order-info">
+                                            <div class="order-info-inner">
+                                                <table id="order_details">
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="text-align: center">Producto ID</th>
+                                                        <th style="text-align: center">Nombre</th>
+                                                        <th style="text-align: center">Precio</th>
+                                                        <th style="text-align: center">Precio Oferta</th>
+                                                        <th style="text-align: center">Acciones</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr id="fila-" class="odd">
+                                                        <td class="td-product">
+                                                            <input disabled="true" type="number" style="max-width: 74px"
+                                                                   name="id-producto-1" id="id_id_producto-1"/>
+                                                        </td>
+                                                        <td class="money">
+                                                            <input type="text" class="form-control"
+                                                                   onchange="$(this).AutocompleteRemainingFields(1)"
+                                                                   onkeyup="$(this).AutocompleteName(1);"
+                                                                   name="nombre_producto-1" id="id_nombre_producto-1"
+                                                                   autocomplete="on" placeholder="Escriba el nombre">
+                                                        </td>
+                                                        <td class="td-product">
+                                                            <input disabled="true" type="text" style="max-width: 51px"
+                                                                   name="precio-producto-1" id="precio_id_producto-1"/>€
+                                                        </td>
+                                                        <td class="td-product">
+                                                            <input disabled="true" type="text" style="max-width: 74px"
+                                                                   name="precio_oferta_producto-1"
+                                                                   id="precio_oferta_id_producto-1"/>€
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" name="trash-row-1"
+                                                                    onclick="deleteThisRow(1)" class="btn btn-default">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                    <tr class="order_summary order_total">
+                                                        <td class="td-label" colspan="4"></td>
+                                                        <td class="total"><span class="money" align="center"
+                                                                                data-currency="EUR">
+                                                            <button type="button" onclick="addNewRow()"
+                                                                    class="btn btn-default">
+                                                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                                            </button>
+                                                        </span></td>
+                                                    </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <button class="btn btn-default" type="submit"
+                                                style="margin:auto; display:block;">Guardar
+{#                                                 type="submit" onclick="submitForm()" #}
+                                        </button>
+                                        <br><br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Historico de estados</h2>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Usuario</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for statelog in statelogs %}
+                        <tr>
+                            <th scope="row">{{ statelog.timestamp }}</th>
+                            <td>{{ statelog.state }}</td>
+                            <td>@{{ statelog.by.username }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <script type="text/javascript">
+
+        function b64toBlob(b64Data, contentType, sliceSize) {
+            contentType = contentType || '';
+            sliceSize = sliceSize || 512;
+
+            var byteCharacters = atob(b64Data);
+            var byteArrays = [];
+
+            for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+                var byteNumbers = new Array(slice.length);
+                for (var i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                var byteArray = new Uint8Array(byteNumbers);
+
+                byteArrays.push(byteArray);
+
+            }
+            var blob = new Blob(byteArrays, {type: contentType});
+            return blob;
+        }
+
+        $('#main_form').submit(function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var main_form = document.getElementById('main_form');
+            var ImageURL = document.getElementById('imagen-drop');
+            if ( ImageURL ){
+                var block = ImageURL.src.split(";");
+                // Get the content type
+                var contentType = block[0].split(":")[1];// In this case "image/gif"
+                // get the real base64 content of the file
+                var realData = block[1].split(",")[1];// In this case "iVBORw0KGg...."
+                blob = b64toBlob(realData, contentType);
+                // Create a FormData and append the file
+                var fd = new FormData(main_form);
+                fd.append("image", blob);
+
+                // Submit Form and upload file
+                $.ajax({
+                    url: "/nuevo-menu/",
+                    data: fd,// the formData function is available in almost all new browsers.
+                    type:"POST",
+                    contentType:false,
+                    processData:false,
+                    cache:false,
+                    dataType:"json", // Change this according to your response from the server.
+                    error:function(err){
+                        console.error(err);
+                    },
+                    success:function(data){
+                    },
+                    complete:function(){
+                        url = "/menus";
+                        $(location).attr("href", url);
+                    }
+                });
+
+            }
+            else{
+                main_form.submit();
+            }
+        });
+
+
+        $(function() {
+            $( ".datepicker" ).datepicker({
+              changeMonth: true,
+              changeYear: true,
+              minDate: 0,
+              dateFormat: 'dd/mm/yy',
+            });
+        });
+
+        $.fn.AutocompleteName = function (index) {
+            var value = $(this).val();
+            $.ajax({
+                url: "/ajax/autocomplete_nombre_producto",
+                data: {
+                    'search': value
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $("#id_nombre_producto-" + index).autocomplete({
+                        source: data.list,
+                        minLength: 1
+                    });
+                }
+            });
+        };
+
+        $.fn.AutocompleteRemainingFields = function (index) {
+            var value = $(this).val();
+            $.ajax({
+                url: "/ajax/autocomplete_id_producto",
+                data: {
+                    'search': value
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $("#id_id_producto-" + index).val(data.id);
+                    $("#precio_id_producto-" + index).val(data.precio);
+                    $("#precio_oferta_id_producto-" + index).val(data.precio_oferta);
+                }
+            });
+        };
+        var holder = document.getElementById('holder'),
+                tests = {
+                    filereader: typeof FileReader != 'undefined',
+                    dnd: 'draggable' in document.createElement('span'),
+                    formdata: !!window.FormData,
+                    progress: "upload" in new XMLHttpRequest
+                },
+                support = {
+                    filereader: document.getElementById('filereader'),
+                    formdata: document.getElementById('formdata'),
+                    progress: document.getElementById('progress')
+                },
+                acceptedTypes = {
+                    'image/png': true,
+                    'image/jpeg': true,
+                    'image/gif': true
+                },
+                progress = document.getElementById('uploadprogress'),
+                fileupload = document.getElementById('upload');
+
+        "filereader formdata progress".split(' ').forEach(function (api) {
+            if (tests[api] === false) {
+                support[api].className = 'fail';
+            } else {
+                // FFS. I could have done el.hidden = true, but IE doesn't support
+                // hidden, so I tried to create a polyfill that would extend the
+                // Element.prototype, but then IE10 doesn't even give me access
+                // to the Element object. Brilliant.
+                support[api].className = 'hidden';
+            }
+        });
+
+        if (tests.dnd) {
+            holder.ondragover = function () {
+                this.className = 'hover';
+                return false;
+            };
+            holder.ondragend = function () {
+                this.className = '';
+                return false;
+            };
+            holder.ondrop = function (e) {
+                this.className = '';
+                e.preventDefault();
+                readfiles(e.dataTransfer.files);
+            }
+        } else {
+            fileupload.className = 'hidden';
+            fileupload.querySelector('input').onchange = function () {
+                readfiles(this.files);
+            };
+        }
+
+
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("historic_button");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        };
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        };
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
+    </script>
+
+{% endblock content %}
