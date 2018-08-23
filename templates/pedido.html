@@ -41,12 +41,12 @@
 									</div>
 									<div class="order-address">
 										<div id="order_payment" class="col-md-6 address-items">
-											<h2 class="address-title">QR CODE</h2>
+											<h2 class="address-title">Código de Cofirmacion</h2>
 											<div class="address-content">
-                                                <img src="{{ pedido.qr.url }}">
-                                                	<div class="address-item">
-                                                        <span class="title">Confirmación</span>
-                                                        <span class="content">{{ pedido.codigo_confirmacion }}</span>
+                                                <img class="centrar" src="{{ pedido.qr.url }}">
+                                                	<div class="address-item" style="font-size=50px">
+                                                        <span class="title"></span>
+                                                        <span class="content"><div>{{ pedido.codigo_confirmacion }}</div></span>
 												    </div>
 											</div>
 										</div>
@@ -106,25 +106,43 @@
                                     <div class="order-address">
 										<div id="order_payment" class="col-md-6 address-items">
 											<h2 class="address-title">Ofertas Seleccionadas</h2>
-											{% for oferta in ofertas %}
+											{% if ofertas %}
+                                                {% for oferta in ofertas %}
+                                                    <div class="address-content">
+                                                        <div class="address-item">
+                                                            <span class="title">{{ oferta.quantity }}</span>
+                                                            <span class="content">{{ oferta.oferta.titulo }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
                                                 <div class="address-content">
                                                     <div class="address-item">
-                                                        <span class="title">{{ oferta.quantity }}</span>
-                                                        <span class="content">{{ oferta.oferta.titulo }}</span>
+                                                        Ninguna oferta seleccionada
                                                     </div>
                                                 </div>
-                                            {% endfor %}
+                                            {% endif %}
 										</div>
-										<div id="order_payment" class="col-md-6 address-items">
-											<h2 class="address-title">Menus Seleccionados</h2>
-											{% for menu in menus %}
-                                                <div class="address-content">
-                                                    <div class="address-item">
-                                                        <span class="title">{{ menu.quantity }}</span>
-                                                        <span class="content">{{ menu.menu.nombre }}</span>
+                                        {% if menus %}
+                                            <div id="order_payment" class="col-md-6 address-items">
+                                                <h2 class="address-title">Menus Seleccionados</h2>
+                                                {% for menu in menus %}
+                                                    <div class="address-content">
+                                                        <div class="address-item">
+                                                            <span class="title">{{ menu.quantity }}</span>
+                                                            <span class="content">{{ menu.menu.nombre }}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            {% endfor %}
+                                                {% endfor %}
+                                        {% else %}
+                                            <div id="order_payment" class="col-md-6 address-items">
+                                                <h2 class="address-title">Menus Seleccionados</h2>
+                                                    <div class="address-content">
+                                                        <div class="address-item">
+                                                            Ningún menu seleccionado
+                                                        </div>
+                                                    </div>
+                                        {% endif %}
 										</div>
 									</div>
 									<div class="order-info">
@@ -140,24 +158,57 @@
 													</tr>
 												</thead>
 												<tbody>
-                                                    {% for producto in productos %}
-                                                        <tr id="10324769618" class="odd">
-                                                            <td class="td-product">
-                                                                <a href="./product.html" align="center" title="">{{ producto.producto.nombre }}</a>
-                                                            </td>
-                                                            <td class="sku note" align="center">#{{ producto.producto.id }}</td>
-                                                            <td class="money"><span class="money" data-currency="EUR">{{ producto.precio_producto }}€</span></td>
-                                                            <td class="quantity" align="center">{{ producto.quantity }}</td>
-                                                            <td class="total" align="center"><span class="money" data-currency="EUR">{{ producto.subtotal }}€</span></td>
-                                                        </tr>
-                                                    {% endfor %}
+                                                        {% for producto in productos %}
+                                                            <tr class="odd">
+                                                                <td class="td-product">
+                                                                    <a href="./ver-producto/{{ producto.producto.id }}" align="center" title="">{{ producto.producto.nombre }}</a>
+                                                                </td>
+                                                                <td class="sku note" align="center">#{{ producto.producto.id }}</td>
+                                                                <td class="money"><span class="money" data-currency="EUR">{{ producto.precio_producto }}€</span></td>
+                                                                <td class="quantity" align="center">{{ producto.quantity }}</td>
+                                                                <td class="total" align="center"><span class="money" data-currency="EUR">{{ producto.subtotal }}€</span></td>
+                                                            </tr>
+                                                        {% endfor %}
+
+                                                        {% for menu in menus %}
+                                                            <tr class="odd">
+                                                                <td class="td-product">
+                                                                    <a href="./ver-menu/{{ menu.menu.id }}" align="center" title="">{{ menu.menu.nombre }}</a>
+                                                                </td>
+                                                                <td class="sku note" align="center">#{{ menu.menu.id }}</td>
+                                                                <td class="money"><span class="money" data-currency="EUR">{{ menu.precio_menu }}€</span></td>
+                                                                <td class="quantity" align="center">{{ menu.quantity }}</td>
+                                                                <td class="total" align="center"><span class="money" data-currency="EUR">{{ menu.subtotal }}€</span></td>
+                                                            </tr>
+                                                        {% endfor %}
+
+
+                                                        {% for oferta in ofertas %}
+                                                            <tr class="odd">
+                                                                <td class="td-product">
+                                                                    <a href="./ver-oferta/{{ oferta.oferta.id }}" align="center" title="">{{ oferta.oferta.titulo }}</a>
+                                                                </td>
+                                                                <td class="sku note" align="center">#{{ oferta.oferta.id }}</td>
+                                                                <td class="money"><span class="money" data-currency="EUR">{{ oferta.precio_oferta }}€</span></td>
+                                                                <td class="quantity" align="center">{{ oferta.quantity }}</td>
+                                                                <td class="total" align="center"><span class="money" data-currency="EUR">{{ oferta.subtotal }}€</span></td>
+                                                            </tr>
+                                                        {% endfor %}
+
 												</tbody>
 												<tfoot>
+                                                    {% if not productos %}
+                                                        <tr class="order_summary order_total">
+                                                            <td class="td-label" colspan="4">Ningún producto seleccionado</td>
+                                                        </tr>
+                                                    {% endif %}
 													<tr class="order_summary order_total">
 														<td class="td-label" colspan="4">Total</td>
-														<td class="total"><span class="money" align="center" data-currency="EUR">{{ pedido.importe }}€</span></td>
+														<td class="total"><span class="money" align="center" data-currency="EUR">{{ pedido.importe_total }}€</span></td>
 													</tr>
+
 												</tfoot>
+
 											</table>
 										</div>
 									</div>

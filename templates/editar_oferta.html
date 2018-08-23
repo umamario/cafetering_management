@@ -10,7 +10,7 @@
                         <div class="row">
                             <div class="page-heading-inner heading-group">
                                 <div class="breadcrumb-group">
-                                    <h1 class="hidden">Nueva oferta</h1>
+                                    <h1 class="hidden">Editar oferta #{{ oferta.id }}</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
                                                 href="./index.html" title="Fast Food" itemprop="url"><span
@@ -18,8 +18,8 @@
 										</span>
                                         <span class="arrow-space"></span>
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-											<a title="Nueva oferta" itemprop="url"><span
-                                                    itemprop="title">Nueva oferta</span></a>
+											<a title="Editar oferta #{{ oferta.id }}" itemprop="url"><span
+                                                    itemprop="title">Editar oferta #{{ oferta.id }}</span></a>
 										</span>
                                     </div>
                                 </div>
@@ -35,32 +35,17 @@
                             <div class="row">
                                 <div class="order-inner">
                                     <div class="order-content">
-                                        {#									<div class="order-id">#}
-                                        {#										<h2>Order #{{ pedido.id }}</h2>#}
-                                        {#										<span class="date">{{ pedido.fecha_creacion }}</span>#}
-                                        <!--<div id="order-cancelled" class="flash notice">
-                                            <h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
-                                            <span class="note">Reason: customer</span>
-                                        </div>-->
-                                        {#									</div>#}
-                                        {#                                <div id="content1"><button type="button" class="btn btn-default" style="margin:auto; display:block;">Marcar como recogido</button></div>#}
-                                        {#                                <div id="content2"><button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/cancelar-pedido/{{pedido.id}}'">Cancelar pedido</button></div>#}
                                         <div class="order-address">
                                             <div id="order_payment" class="col-md-6 address-items">
                                                 <h2 class="address-title">Imagen</h2>
                                                 <div class="address-content">
-                                                    <div id="holder"></div>
-                                                    {#                                                <p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>#}
+                                                {% if oferta.imagen %}
+                                                    <img src="{{ oferta.imagen.url }}">
+                                                {% else %}
+                                                    <label>Ninguna imagen asociada</label>
+                                                {% endif %}
+                                                    <br><br>
                                                     <p id="upload"><input type="file" name="upload_field_classic"></p>
-                                                    <p id="filereader">File API & FileReader API not supported</p>
-                                                    <p id="formdata">XHR2's FormData is not supported</p>
-                                                    <p id="progress">XHR2's upload progress isn't supported</p>
-                                                    {#                                                      <p>Upload progress: <progress id="uploadprogress" max="100" value="0">0</progress></p>#}
-                                                    {#                                                <img src="{{ pedido.qr.url }}">#}
-                                                    <div class="address-item">
-                                                        {#                                                        <span class="title">Confirmación</span>#}
-                                                        {#                                                        <span class="content">{{ pedido.codigo_confirmacion }}</span>#}
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -72,35 +57,50 @@
 
                                                         <span class="content">
                                                               <select name="estado" class="form-control" id="estado_id">
-                                                                    <option selected>Activado</option>
-                                                                    <option>Desactivado</option>
+                                                                  {% if oferta.estado == 1 %}
+                                                                      <option selected>Activado</option>
+                                                                      <option>Desactivado</option>
+                                                                  {% else %}
+                                                                      <option>Activado</option>
+                                                                      <option selected>Desactivado</option>
+                                                                  {% endif %}
                                                               </select>
                                                         </span>
                                                     </div>
-                                                    {#                                                <label><h4 align="center">Hola</h4></label>#}
                                                     <div class="form-group">
                                                         <label><h4 align="center">Título</h4></label>
                                                         <input type="text" name="titulo" class="form-control"
-                                                               id="exampleInputPassword1" style="height: 32px"
+                                                               id="exampleInputPassword1" value="{{ oferta.titulo }}"
+                                                               style="height: 32px"
                                                                placeholder="Escriba el titulo" maxlength="30">
                                                         <label><h4 align="center">Descripción</h4></label>
                                                         <textarea class="form-control" id="exampleFormControlTextarea1"
                                                                   name="descripcion"
                                                                   placeholder="Escriba la descripción" rows="3"
-                                                                  maxlength="200"></textarea>
+                                                                  maxlength="200">{{ oferta.descripcion }}</textarea>
                                                         <br>
                                                         <div class="trio">
                                                             <input id="trio1" type="text" name="valido_hasta"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
+                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" value="{{ oferta.valido_hasta |date:"d/m/Y" }}"
                                                                    class="datepicker" placeholder="Valido hasta">
                                                             <input id="trio2" type="number" name="descuento"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
-                                                                   placeholder="Descuento">
+                                                                   style="padding: 5px 0px; text-align: right; width: 119px; background-color:white"
+                                                                   placeholder="Descuento"
+                                                                    {% if oferta.descuento_porcentual %}
+                                                                        value="{{ oferta.descuento_porcentual }}">
+                                                                    {% else %}
+                                                                        value="{{ oferta.descuento_numerico }}">
+                                                                    {% endif %}
                                                             <select id="trio3" name="tipo_descuento"
                                                                     style="padding-top: 7px; padding-bottom: 7px; padding-left: 4px; background-color: white"
                                                                     name="tipo_descuento">
-                                                                <option selected>%</option>
-                                                                <option>€</option>
+                                                                {% if oferta.descuento_porcentual %}
+                                                                    <option selected>%</option>
+                                                                    <option>€</option>
+                                                                {% else %}
+                                                                    <option>%</option>
+                                                                    <option selected>€</option>
+                                                                {% endif %}
                                                             </select>
                                                         </div>
                                                         <br>
@@ -121,34 +121,28 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr id="fila-" class="odd">
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="number" style="max-width: 74px"
-                                                                   name="id-producto-1" id="id_id_producto-1"/>
-                                                        </td>
-                                                        <td class="money">
-                                                            <input type="text" class="form-control"
-                                                                   onchange="$(this).AutocompleteRemainingFields(1)"
-                                                                   onkeyup="$(this).AutocompleteName(1);"
-                                                                   name="nombre_producto-1" id="id_nombre_producto-1"
-                                                                   autocomplete="on" placeholder="Escriba el nombre">
-                                                        </td>
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="text" style="max-width: 51px"
-                                                                   name="precio-producto-1" id="precio_id_producto-1"/>€
-                                                        </td>
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="text" style="max-width: 74px"
-                                                                   name="precio_oferta_producto-1"
-                                                                   id="precio_oferta_id_producto-1"/>€
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" name="trash-row-1"
-                                                                    onclick="deleteThisRow(1)" class="btn btn-default">
-                                                                <span class="glyphicon glyphicon-trash"></span>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                    {% for producto in productos %}
+                                                        <tr id="fila-" class="odd">
+                                                            <td class="td-product">
+                                                                #{{ producto.id }}
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.nombre }}
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.precio }}€
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.precio_oferta }}€
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" name="trash-row-1"
+                                                                        onclick="deleteThisRowWithDatabase({{ forloop.counter }}, 'oferta', {{ oferta.id}})" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
                                                     </tbody>
                                                     <tfoot>
                                                     <tr class="order_summary order_total">
@@ -178,42 +172,6 @@
                 </div>
             </section>
         </main>
-    </div>
-
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-
-        <!-- Modal content -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Historico de estados</h2>
-            </div>
-            <div class="modal-body">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Fecha</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Usuario</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for statelog in statelogs %}
-                        <tr>
-                            <th scope="row">{{ statelog.timestamp }}</th>
-                            <td>{{ statelog.state }}</td>
-                            <td>@{{ statelog.by.username }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-
-            </div>
-        </div>
-
     </div>
 
 

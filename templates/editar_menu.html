@@ -10,7 +10,7 @@
                         <div class="row">
                             <div class="page-heading-inner heading-group">
                                 <div class="breadcrumb-group">
-                                    <h1 class="hidden">Nueva oferta</h1>
+                                    <h1 class="hidden">Nuevo Menu</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
                                                 href="./index.html" title="Fast Food" itemprop="url"><span
@@ -18,8 +18,8 @@
 										</span>
                                         <span class="arrow-space"></span>
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-											<a title="Nueva oferta" itemprop="url"><span
-                                                    itemprop="title">Nueva oferta</span></a>
+											<a title="Nuevo menu" itemprop="url"><span
+                                                    itemprop="title">Nuevo menu</span></a>
 										</span>
                                     </div>
                                 </div>
@@ -35,32 +35,17 @@
                             <div class="row">
                                 <div class="order-inner">
                                     <div class="order-content">
-                                        {#									<div class="order-id">#}
-                                        {#										<h2>Order #{{ pedido.id }}</h2>#}
-                                        {#										<span class="date">{{ pedido.fecha_creacion }}</span>#}
-                                        <!--<div id="order-cancelled" class="flash notice">
-                                            <h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
-                                            <span class="note">Reason: customer</span>
-                                        </div>-->
-                                        {#									</div>#}
-                                        {#                                <div id="content1"><button type="button" class="btn btn-default" style="margin:auto; display:block;">Marcar como recogido</button></div>#}
-                                        {#                                <div id="content2"><button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/cancelar-pedido/{{pedido.id}}'">Cancelar pedido</button></div>#}
                                         <div class="order-address">
                                             <div id="order_payment" class="col-md-6 address-items">
                                                 <h2 class="address-title">Imagen</h2>
                                                 <div class="address-content">
-                                                    <div id="holder"></div>
-                                                    {#                                                <p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>#}
+                                                    {% if menu.imagen %}
+                                                        <img src="{{ menu.imagen.url }}">
+                                                    {% else %}
+                                                        <label>Ninguna imagen asociada</label>
+                                                    {% endif %}
+                                                    <br><br>
                                                     <p id="upload"><input type="file" name="upload_field_classic"></p>
-                                                    <p id="filereader">File API & FileReader API not supported</p>
-                                                    <p id="formdata">XHR2's FormData is not supported</p>
-                                                    <p id="progress">XHR2's upload progress isn't supported</p>
-                                                    {#                                                      <p>Upload progress: <progress id="uploadprogress" max="100" value="0">0</progress></p>#}
-                                                    {#                                                <img src="{{ pedido.qr.url }}">#}
-                                                    <div class="address-item">
-                                                        {#                                                        <span class="title">Confirmación</span>#}
-                                                        {#                                                        <span class="content">{{ pedido.codigo_confirmacion }}</span>#}
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -72,36 +57,43 @@
 
                                                         <span class="content">
                                                               <select name="estado" class="form-control" id="estado_id">
-                                                                    <option selected>Activado</option>
-                                                                    <option>Desactivado</option>
+                                                                  {% if menu.estado == 1 %}
+                                                                      <option selected>Activado</option>
+                                                                      <option>Desactivado</option>
+                                                                  {% else %}
+                                                                      <option>Activado</option>
+                                                                      <option selected>Desactivado</option>
+                                                                  {% endif %}
                                                               </select>
                                                         </span>
                                                     </div>
-                                                    {#                                                <label><h4 align="center">Hola</h4></label>#}
                                                     <div class="form-group">
-                                                        <label><h4 align="center">Título</h4></label>
-                                                        <input type="text" name="titulo" class="form-control"
+                                                        <label><h4 align="center">Nombre</h4></label>
+                                                        <input type="text" name="nombre" class="form-control"
                                                                id="exampleInputPassword1" style="height: 32px"
+                                                               value="{{ menu.nombre }}"
                                                                placeholder="Escriba el titulo" maxlength="30">
                                                         <label><h4 align="center">Descripción</h4></label>
                                                         <textarea class="form-control" id="exampleFormControlTextarea1"
                                                                   name="descripcion"
                                                                   placeholder="Escriba la descripción" rows="3"
-                                                                  maxlength="200"></textarea>
+                                                                  maxlength="200">{{ menu.descripcion }}</textarea>
                                                         <br>
-                                                        <div class="trio">
-                                                            <input id="trio1" type="text" name="valido_hasta"
+                                                        <div>
+                                                            <input id="content1" type="text" name="valido_hasta"
                                                                    style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
-                                                                   class="datepicker" placeholder="Valido hasta">
-                                                            <input id="trio2" type="number" name="descuento"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
-                                                                   placeholder="Descuento">
-                                                            <select id="trio3" name="tipo_descuento"
-                                                                    style="padding-top: 7px; padding-bottom: 7px; padding-left: 4px; background-color: white"
-                                                                    name="tipo_descuento">
-                                                                <option selected>%</option>
-                                                                <option>€</option>
-                                                            </select>
+                                                                   class="datepicker"
+                                                                   value="{{ menu.valido_hasta |date:"d/m/Y" }}"
+                                                                   placeholder="Valido hasta">
+
+                                                            <div id="content2" class="input-group">
+                                                                <span class="input-group-addon">€</span>
+                                                            <input type="text" name="precio" maxlength="4"
+                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" class="form-control currency"
+                                                                   value="{{ menu.precio }}"
+                                                                   onkeypress="return onlyNumbers(event)"
+                                                                   placeholder="Precio">
+                                                            </div>
                                                         </div>
                                                         <br>
                                                     </div>
@@ -121,34 +113,29 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr id="fila-" class="odd">
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="number" style="max-width: 74px"
-                                                                   name="id-producto-1" id="id_id_producto-1"/>
-                                                        </td>
-                                                        <td class="money">
-                                                            <input type="text" class="form-control"
-                                                                   onchange="$(this).AutocompleteRemainingFields(1)"
-                                                                   onkeyup="$(this).AutocompleteName(1);"
-                                                                   name="nombre_producto-1" id="id_nombre_producto-1"
-                                                                   autocomplete="on" placeholder="Escriba el nombre">
-                                                        </td>
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="text" style="max-width: 51px"
-                                                                   name="precio-producto-1" id="precio_id_producto-1"/>€
-                                                        </td>
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="text" style="max-width: 74px"
-                                                                   name="precio_oferta_producto-1"
-                                                                   id="precio_oferta_id_producto-1"/>€
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" name="trash-row-1"
-                                                                    onclick="deleteThisRow(1)" class="btn btn-default">
-                                                                <span class="glyphicon glyphicon-trash"></span>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                    {% for producto in productos %}
+                                                        <tr id="fila-" class="odd">
+                                                            <td class="td-product">
+                                                                #{{ producto.id }}
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.nombre }}
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.precio }}€
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.precio_oferta }}€
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" name="trash-row-1"
+                                                                        onclick="deleteThisRowWithDatabase({{ forloop.counter }}, 'menu', {{ menu.id }})"
+                                                                        class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
                                                     </tbody>
                                                     <tfoot>
                                                     <tr class="order_summary order_total">
@@ -261,7 +248,7 @@
 
                 // Submit Form and upload file
                 $.ajax({
-                    url: "/nueva-oferta/",
+                    url: "/nuevo-menu/",
                     data: fd,// the formData function is available in almost all new browsers.
                     type: "POST",
                     contentType: false,
@@ -274,7 +261,7 @@
                     success: function (data) {
                     },
                     complete: function () {
-                        url = "/ofertas";
+                        url = "/menus";
                         $(location).attr("href", url);
                     }
                 });

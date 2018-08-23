@@ -130,30 +130,6 @@
                                                 </div>
 										</div>
 									</div>
-{#                                    <div class="order-address">#}
-{#										<div id="order_payment" class="col-md-6 address-items">#}
-{#											<h2 class="address-title">Ofertas Seleccionadas</h2>#}
-{#											{% for oferta in ofertas %}#}
-{#                                                <div class="address-content">#}
-{#                                                    <div class="address-item">#}
-{#                                                        <span class="title"><input name="oferta-pedido-cantidad-{{ oferta.id }}" step="any" min="0" type="number" style="max-width: 25%; padding: 0px 0px" value="{{ oferta.quantity }}"></span>#}
-{#                                                        <span class="content">{{ oferta.oferta.titulo }}</span>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            {% endfor %}#}
-{#										</div>#}
-{#										<div id="order_payment" class="col-md-6 address-items">#}
-{#											<h2 class="address-title">Menus Seleccionados</h2>#}
-{#											{% for menu in menus %}#}
-{#                                                <div class="address-content">#}
-{#                                                    <div class="address-item">#}
-{#                                                        <span class="title"><input name="menu-pedido-cantidad-{{ menu.id }}" step="any" min="0" type="number" style="max-width: 25%; padding: 0px 0px" value="{{ menu.quantity }}"></span>#}
-{#                                                        <span class="content">{{ menu.menu.nombre }}</span>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            {% endfor %}#}
-{#										</div>#}
-{#									</div>#}
 									<div class="order-info">
 										<div class="order-info-inner">
 											<table id="order_details">
@@ -217,10 +193,20 @@
                                                     {% endfor %}
 												</tbody>
 												<tfoot>
-													<tr class="order_summary order_total">
-														<td class="td-label" colspan="4">Total</td>
-														<td class="total"><span class="money" align="center" data-currency="EUR">{{ pedido.importe_total }}€</span></td>
-													</tr>
+                                                    <tr class="order_summary order_total">
+                                                        <td class="td-label" colspan="4"></td>
+                                                        <td class="total"><span class="money" align="center"
+                                                                                data-currency="EUR">
+                                                            <button type="button" onclick="addNewRow()"
+                                                                    class="btn btn-default">
+                                                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                                            </button>
+                                                        </span></td>
+                                                    </tr>
+{#													<tr class="order_summary order_total">#}
+{#														<td class="td-label" colspan="4">Total</td>#}
+{#														<td class="total"><span class="money" align="center" data-currency="EUR">{{ pedido.importe_total }}€</span></td>#}
+{#													</tr>#}
 												</tfoot>
 											</table>
 										</div>

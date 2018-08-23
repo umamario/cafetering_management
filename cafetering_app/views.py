@@ -34,21 +34,98 @@ def pedido_view(request, pedido_pk):
                                            'menus': menus, 'productos': productos, 'statelogs': statelogs})
 
 
-def categoria_view(request, categoria_pk):
+def producto_view(request, producto_pk):
     pass
+
+
+def categoria_view(request, categoria_pk):
+    categoria = get_object_or_404(Categoria, pk=categoria_pk)
+    productos = categoria.productos.all()
+    return render(request, "ver-categoria.html", {'categoria': categoria, 'productos': productos})
+
+
+def eliminar_categoria_view(request, categoria_pk):
+    obj = get_object_or_404(Categoria, pk=categoria_pk)
+    obj.delete()
+    return redirect(categorias_view)
+
+
+def eliminar_producto_view(request, producto_pk):
+    obj = get_object_or_404(Producto, pk=producto_pk)
+    obj.delete()
+    return redirect(productos_view)
+
+
+def eliminar_pedido_view(request, pedido_pk):
+    obj = get_object_or_404(Pedido, pk=pedido_pk)
+    obj.delete()
+    return redirect(pedidos_view)
+
+
+def eliminar_menu_view(request, menu_pk):
+    obj = get_object_or_404(Menu, pk=menu_pk)
+    obj.delete()
+    return redirect(menus_view)
+
+
+def eliminar_oferta_view(request, oferta_pk):
+    obj = get_object_or_404(Oferta, pk=oferta_pk)
+    obj.delete()
+    return redirect(ofertas_view)
 
 
 def oferta_view(request, oferta_pk):
-    pass
+    oferta = get_object_or_404(Oferta, pk=oferta_pk)
+    productos = oferta.productos.all()
+    return render(request, "ver-oferta.html", {'oferta': oferta, 'productos': productos})
 
 
 def menu_view(request, menu_pk):
-    pass
+    menu = get_object_or_404(Menu, pk=menu_pk)
+    productos = menu.productos.all()
+    return render(request, "ver-menu.html", {'menu': menu, 'productos': productos})
 
 
 def nueva_oferta_view(request):
     if request.method == 'GET':
         return render(request, 'nueva_oferta.html')
+    else:
+        titulo = request.POST.get('titulo', '')
+        descripcion = request.POST.get('descripcion', '')
+        valido_hasta_str = request.POST.get('valido_hasta', '')
+        valido_hasta = None
+        if valido_hasta_str:
+            valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
+        descuento = request.POST.get('descuento', '')
+        isPorcentage = True if request.POST.get('tipo_descuento', '') == u'%' else False
+        estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
+        oferta = Oferta.objects.create(titulo=titulo, descripcion=descripcion,
+                                       estado=estado, valido_hasta=valido_hasta)
+        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
+        productos = Producto.objects.filter(nombre__in=product_names)
+        if request.is_ajax():
+            img = request.FILES.get('image')
+        else:
+            img = request.FILES.get('upload_field_classic')
+        if img:
+            oferta.imagen.save(u'oferta-%d.%s' % (oferta.id, img.content_type.split('/')[1]), img)
+
+        if isPorcentage:
+            oferta.descuento_porcentual = descuento
+        else:
+            oferta.descuento_numerico = descuento
+
+        if productos.exists():
+            oferta.productos.add(*list(productos))
+
+        oferta.save()
+
+        return redirect(ofertas_view)
+
+
+def nuevo_pedido_view(request):
+    if request.method == 'GET':
+        return render(request, 'nuevo_pedido.html')
     else:
         titulo = request.POST.get('titulo', '')
         descripcion = request.POST.get('descripcion', '')
@@ -113,16 +190,6 @@ def nuevo_menu_view(request):
         return redirect(menus_view)
 
 
-def handle_uploaded_file(f, id, i):
-    dire = os.getcwd() + '/appwb/static/anuncios/' + str(id)
-    if i == 1:
-        os.mkdir(dire)
-    arch = dire + '/' + str(id) + '_' + str(i) + '.jpg'
-    with open(arch, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-
 def nueva_categoria_view(request):
     if request.method == 'GET':
         return render(request, 'nueva_categoria.html')
@@ -171,6 +238,32 @@ def autocomplete_id_producto(request):
         return JsonResponse(data)
 
 
+def remove_product_from_list(request):
+    """
+    View used to autocomplete the buy currency field with the corresponding currency symbol
+    :param request:
+    :return: Json response with the matched symbols
+    """
+    from django.http import JsonResponse
+    if request.is_ajax():
+        producto = get_object_or_404(Producto, pk=int(request.GET.get('id', '')))
+        object_name = request.GET.get('object_name', '')
+        object_pk = request.GET.get('object_pk', '')
+        if object_name == 'categoria':
+            obj = Categoria.objects.get(pk=object_pk)
+        elif object_name == 'oferta':
+            obj = Oferta.objects.get(pk=object_pk)
+        elif object_name == 'menu':
+            obj = Menu.objects.get(pk=object_pk)
+        elif object_name == 'pedido':
+            obj = Pedido.objects.get(pk=object_pk)
+
+        obj.productos.remove(producto)
+
+        data = {}
+        return JsonResponse(data)
+
+
 def autocomplete_nombre_producto(request):
     """
     View used to autocomplete the buy currency field with the corresponding currency symbol
@@ -187,6 +280,51 @@ def autocomplete_nombre_producto(request):
             'list': list,
         }
         return JsonResponse(data)
+
+
+def editar_producto_view(request, producto_pk):
+    pass
+
+
+def editar_oferta_view(request, oferta_pk):
+    if request.method == 'GET':
+        oferta = get_object_or_404(Oferta, pk=oferta_pk)
+        productos = oferta.productos.all()
+        return render(request, "editar_oferta.html", {'oferta': oferta, 'productos': productos})
+    else:
+        titulo = request.POST.get('titulo', '')
+        descripcion = request.POST.get('descripcion', '')
+        valido_hasta_str = request.POST.get('valido_hasta', '')
+        valido_hasta = None
+        if valido_hasta_str:
+            valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
+        descuento = request.POST.get('descuento', '')
+        isPorcentage = True if request.POST.get('tipo_descuento', '') == u'%' else False
+        estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
+        oferta = Oferta.objects.get(pk=oferta_pk)
+        oferta.titulo = titulo
+        oferta.descripcion = descripcion
+        oferta.estado = estado
+        oferta.valido_hasta = valido_hasta
+
+        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
+        productos = Producto.objects.filter(nombre__in=product_names)
+
+        if request.FILES.get('upload_field_classic', ''):
+            img = request.FILES.get('upload_field_classic')
+            oferta.imagen.save(u'oferta-%d.%s' % (oferta.id, img.content_type.split('/')[1]), img)
+
+        if isPorcentage:
+            oferta.descuento_porcentual = descuento
+        else:
+            oferta.descuento_numerico = descuento
+
+        if productos.exists():
+            oferta.productos.add(*list(productos))
+
+        oferta.save()
+
+        return redirect(oferta_view, oferta_pk)
 
 
 def editar_pedido_view(request, pedido_pk):
@@ -236,6 +374,70 @@ def editar_pedido_view(request, pedido_pk):
         pedido.save()
 
         return redirect(pedido_view, pedido_pk=pedido.id)
+
+
+def editar_menu_view(request, menu_pk):
+    if request.method == 'GET':
+        menu = get_object_or_404(Menu, pk=menu_pk)
+        productos = menu.productos.all()
+        return render(request, 'editar_menu.html', {'menu': menu, 'productos': productos})
+    else:
+        nombre = request.POST.get('nombre', '')
+        descripcion = request.POST.get('descripcion', '')
+        valido_hasta_str = request.POST.get('valido_hasta', '')
+        if valido_hasta_str:
+            valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
+        precio = request.POST.get('precio', '').replace(',', '.')
+        estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
+
+        menu = Menu.objects.get(pk=int(menu_pk))
+        menu.nombre = nombre
+        menu.descripcion = descripcion
+        menu.estado = estado
+        menu.precio = precio
+        menu.valido_hasta = valido_hasta
+
+        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
+        productos = Producto.objects.filter(nombre__in=product_names)
+        img = request.FILES.get('upload_field_classic', '')
+        if img:
+            menu.imagen.save(u'menu-%d.%s' % (menu.id, img.content_type.split('/')[1]), img)
+
+        if productos.exists():
+            menu.productos.add(*list(productos))
+
+        menu.save()
+
+        return redirect(menu_view, menu_pk)
+
+
+def editar_categoria_view(request, categoria_pk):
+    if request.method == 'GET':
+        categoria = get_object_or_404(Categoria, pk=categoria_pk)
+        productos = categoria.productos.all()
+        return render(request, 'editar-categoria.html', {'categoria': categoria, 'productos': productos})
+    else:
+        nombre = request.POST.get('titulo', '')
+        descripcion = request.POST.get('descripcion', '')
+        estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
+
+        categoria = Categoria.objects.get(pk=int(categoria_pk))
+        categoria.nombre = nombre
+        categoria.descripcion = descripcion
+        categoria.estado = estado
+
+        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
+        productos = Producto.objects.filter(nombre__in=product_names)
+        img = request.FILES.get('upload_field_classic', '')
+        if img:
+            categoria.imagen.save(u'categoria-%d.%s' % (categoria.id, img.content_type.split('/')[1]), img)
+
+        if productos.exists():
+            categoria.productos.add(*list(productos))
+
+        categoria.save()
+
+        return redirect(categoria_view, categoria_pk)
 
 
 def test_view(request):

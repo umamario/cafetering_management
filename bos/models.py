@@ -136,6 +136,7 @@ class Menu(models.Model):
     precio = models.FloatField(null=True, blank=True)
     valido_hasta = models.DateField(null=True, blank=True)
 
+
 STATES_STR = ('En cola', 'En proceso', 'Preparado', 'Entregado', 'No recogido', 'Cancelado')
 STATES = list(zip(STATES_STR, STATES_STR))
 
@@ -153,7 +154,7 @@ class Pedido(models.Model):
     ordenante = models.ManyToManyField(Alumno, related_name='alumnos')
     resenas = models.ManyToManyField(Resena, blank=True)
     importe = models.FloatField(null=True, blank=True)
-    codigo_confirmacion = models.CharField(unique=True, max_length=10)
+    codigo_confirmacion = models.CharField(unique=True, null=True, blank=True, max_length=10)
 
     @property
     def hasResena(self):
@@ -183,9 +184,36 @@ class Pedido(models.Model):
             total += menu.subtotal
         return total
 
+    def generate_confirmation_code(self):
+        import string
+        import random
+        code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        while Pedido.objects.filter(codigo_confirmacion=code):
+            code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        return code
+
     @property
     def importe_total(self):
         return self.importe_productos + self.importe_ofertas + self.importe_menus
+
+    def save(self, *args, **kwargs):
+        self.importe = self.importe_total
+
+        if not self.codigo_confirmacion:
+            self.codigo_confirmacion = self.generate_confirmation_code()
+
+        super(Pedido, self).save(*args, **kwargs)
+
+        if not self.qr:
+            import qrcode
+            from StringIO import StringIO
+            from django.core.files.uploadedfile import InMemoryUploadedFile
+            img = qrcode.make(self.codigo_confirmacion, box_size=8, border=1)
+            buffer = StringIO()
+            img.save(buffer, "PNG")
+            image_file = InMemoryUploadedFile(buffer, None, 'qr.png', 'image/png', buffer.len, None)
+            self.qr.save(u'qr-%d.png' % self.id, image_file)
+
 
     @transition(field=estado, source=['En cola'], target='En proceso')
     def start(self):

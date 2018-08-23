@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="page-container" id="PageContainer">
+        <main class="main-content" id="MainContent" role="main">
+            <section class="heading-content">
+                <div class="heading-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="page-heading-inner heading-group">
+                                <div class="breadcrumb-group">
+                                    <h1 class="hidden">Ver oferta #{{ oferta.id }}</h1>
+                                    <div class="breadcrumb clearfix">
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                itemprop="title"><i class="fa fa-home"></i></span></a>
+										</span>
+                                        <span class="arrow-space"></span>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+											<a title="Nueva oferta" itemprop="url"><span
+                                                    itemprop="title"> Ver oferta #{{ oferta.id }}</span></a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="order-layout">
+
+                <button class="btn btn-default" onclick="location.href='/editar-oferta/{{oferta.id}}'"
+                            style="margin:auto; display:block;">Editar Oferta
+                </button>
+                <div class="order-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="order-inner">
+                                <div class="order-content">
+                                    <div class="order-address">
+                                        <div id="order_payment" class="col-md-6 address-items">
+                                            <h2 class="address-title">Imagen</h2>
+                                            <div class="address-content">
+                                                {% if oferta.imagen %}
+                                                    <img src="{{ oferta.imagen.url }}">
+                                                {% else %}
+                                                    <label>Ninguna imagen asociada</label>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div id="order_shipping" class="col-md-6 address-items">
+                                            <h2 class="address-title">Datos</h2>
+                                            <div class="address-content">
+                                                <div class="address-item name">
+                                                    <span class="title">Estado</span>
+
+                                                        <span class="content">
+                                                              <select name="estado" class="form-control" id="estado_id"
+                                                                      disabled="disabled">
+                                                                  {% if oferta.estado == 1 %}
+                                                                      <option selected>Activado</option>
+                                                                      <option>Desactivado</option>
+                                                                  {% else %}
+                                                                      <option>Activado</option>
+                                                                      <option selected>Desactivado</option>
+                                                                  {% endif %}
+                                                              </select>
+                                                        </span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><h4 align="center">Título</h4></label>
+                                                    <input type="text" name="titulo" class="form-control"
+                                                           id="exampleInputPassword1" style="height: 32px"
+                                                           placeholder="Escriba el titulo" maxlength="30"
+                                                           value="{{ oferta.titulo }}" disabled="disabled">
+                                                    <label><h4 align="center">Descripción</h4></label>
+                                                        <textarea class="form-control" id="exampleFormControlTextarea1"
+                                                                  name="descripcion" disabled="disabled" rows="2"
+                                                                  placeholder="Escriba la descripción">{{ oferta.descripcion }}</textarea>
+                                                    <br>
+                                                    <div class="trio">
+                                                        <input id="trio1" type="text" name="valido_hasta"
+                                                               style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
+                                                               disabled="disabled"
+                                                               class="datepicker"
+                                                               value="{{ oferta.valido_hasta |date:"d M, Y" }}">
+                                                        <input id="trio2" type="number" name="descuento"
+                                                               style="padding: 5px 0px; text-align: right; width: 119px; background-color:white"
+                                                               disabled="disabled"
+                                                                {% if oferta.descuento_porcentual %}
+                                                               value="{{ oferta.descuento_porcentual }}">
+                                                                {% else %}
+                                                                    value="{{ oferta.descuento_numerico }}">
+                                                                {% endif %}
+
+                                                        <select id="trio3" name="tipo_descuento"
+                                                                style="padding-top: 7px; padding-bottom: 7px; padding-left: 4px; background-color: white"
+                                                                disabled="disabled"
+                                                                name="tipo_descuento">
+                                                            {% if oferta.descuento_porcentual %}
+                                                                <option selected>%</option>
+                                                                <option>€</option>
+                                                            {% else %}
+                                                                <option>%</option>
+                                                                <option selected>€</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="order-info">
+                                        <div class="order-info-inner">
+                                            <table id="order_details">
+                                                <thead>
+                                                <tr>
+                                                    <th style="text-align: center">Producto ID</th>
+                                                    <th style="text-align: center">Nombre</th>
+                                                    <th style="text-align: center">Precio</th>
+                                                    <th style="text-align: center">Precio Oferta</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for producto in productos %}
+                                                        <tr id="fila-" class="odd">
+                                                            <td class="td-product">
+                                                                #{{ producto.id }}
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.nombre }}
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.precio }}€
+                                                            </td>
+                                                            <td class="td-product">
+                                                                {{ producto.precio_oferta }}€
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <br><br>
+                                    <button class="btn btn-default" onclick="location.href='/eliminar-oferta/{{oferta.id}}'"
+                                                style="margin:auto; display:block;">Eliminar Oferta
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+{% endblock content %}

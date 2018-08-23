@@ -89,7 +89,32 @@ function deleteThisRow(row_index) {
     table.deleteRow(row_index - 1)
 }
 
+function deleteThisRowWithDatabase(row_index, object_name, object_pk) {
+    var table = document.getElementById("order_details").getElementsByTagName('tbody')[0];
+    var value = table.rows[row_index - 1].cells[0].innerHTML.replace('#','').trim()
+    $.ajax({
+        url: "/ajax/remove_product_from_list",
+        data: {
+            'id': value,
+            'object_name': object_name,
+            'object_pk': object_pk,
+        },
+        dataType: 'json',
+        success: function (data) {
+            table.deleteRow(row_index - 1)
+            alert("Eliminado correctamente")
+        }
+    });
+
+}
+
 function setZero(id) {
     document.getElementById("producto-" + id).value = "0";
     document.getElementById("fila-" + id).classList.add("strikeout");
+}
+
+function onlyNumbers(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    return !((charCode < 48 || charCode > 57) && charCode != 44 && charCode > 31);
 }
