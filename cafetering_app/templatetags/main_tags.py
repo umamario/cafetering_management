@@ -36,3 +36,8 @@ def getProductosID(value):
 def getCantidadProductos(value):
     categoria = Categoria.objects.get(pk=int(value))
     return categoria.productos.all().count()
+
+
+@register.filter
+def classname(obj):
+    return obj.__class__.__name__

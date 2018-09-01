@@ -1,290 +1,343 @@
 {% extends 'base.html' %}
 {% block content %}
-	
-	<!-- Main Content -->
-	<div class="page-container" id="PageContainer">
-		<main class="main-content" id="MainContent" role="main">
-			<section class="heading-content">
-				<div class="heading-wrapper">
-					<div class="container">
-						<div class="row">
-							<div class="page-heading-inner heading-group">
-								<div class="breadcrumb-group">
-									<h1 class="hidden">Order History</h1>
-									<div class="breadcrumb clearfix">
-										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="./index.html" title="Fast Food" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a>
-										</span>
-										<span class="arrow-space"></span>
-										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-											<a href="./order.html" title="Order History" itemprop="url"><span itemprop="title">Order History</span></a>
-										</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section class="order-layout">
-				<div class="order-wrapper">
-					<div class="container">
-						<div class="row">
-							<div class="order-inner">
-								<div class="order-content">
-									<div class="order-id">
-										<h2>Order #{{ pedido.id }}</h2>
-										<span class="date">{{ pedido.fecha_creacion }}</span>
-										<!--<div id="order-cancelled" class="flash notice">
-											<h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
-											<span class="note">Reason: customer</span>
-										</div>-->
-									</div>
-									<div class="order-address">
-										<div id="order_payment" class="col-md-6 address-items">
-											<h2 class="address-title">Código de Cofirmacion</h2>
-											<div class="address-content">
-                                                <img class="centrar" src="{{ pedido.qr.url }}">
-                                                	<div class="address-item" style="font-size=50px">
-                                                        <span class="title"></span>
-                                                        <span class="content"><div>{{ pedido.codigo_confirmacion }}</div></span>
-												    </div>
-											</div>
-										</div>
 
-										<div id="order_shipping" class="col-md-6 address-items">
-											<h2 class="address-title">Datos del pedido</h2>
+    <!-- Main Content -->
+    <div class="page-container" id="PageContainer">
+        <main class="main-content" id="MainContent" role="main">
+            <section class="heading-content">
+                <div class="heading-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="page-heading-inner heading-group">
+                                <div class="breadcrumb-group">
+                                    <h1 class="hidden">Ver pedido #{{ pedido.id }}</h1>
+                                    <div class="breadcrumb clearfix">
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
+                                                href="./index" title="Fast Food" itemprop="url"><span
+                                                itemprop="title"><i class="fa fa-home"></i></span></a>
+										</span>
+                                        <span class="arrow-space"></span>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+											<a title="Ver pedido #{{ pedido.id }}" itemprop="url"><span
+                                                    itemprop="title">Ver pedido #{{ pedido.id }}</span></a>
+										</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="order-layout">
+                <div class="order-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="order-inner">
+                                <div class="order-content">
+                                    <div class="order-id">
+                                        <h2>Pedido #{{ pedido.id }}</h2>
+                                        <span class="date">{{ pedido.fecha_creacion }}</span>
+                                    </div>
+
+                                    <div class="order-address">
+                                        <div id="order_payment" class="col-md-6 address-items">
+                                            <h2 class="address-title">Código de Cofirmacion</h2>
+                                            <div class="address-content">
+                                                <img class="centrar" src="{{ pedido.qr.url }}">
+                                                <div class="address-item" style="font-size=50px">
+                                                    <span class="title"></span>
+                                                    <span class="content"><div>{{ pedido.codigo_confirmacion }}</div></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="order_shipping" class="col-md-6 address-items">
+                                            <h2 class="address-title">Datos del pedido</h2>
 
                                             <div class="address-content">
-												<div class="address-item name">
-													<span class="title">Estado</span>
-													<span class="content">{{ pedido.get_estado_display }} </span>
-                                                         <button type="button" id='historic_button' style="padding: 3px 6px" class="btn btn-default .btn-xs">
-                                                            <span class="glyphicon glyphicon-list small"></span>
-                                                        </button>
-												</div>
-												<div class="address-item name">
-													<span class="title">Recogida estimada</span>
-													<span class="content">{{ pedido.recogida_estimada|date:'D, d N H:i:s' }}</span>
-												</div>
-												<div class="address-item name">
-													<span class="title">Recogida</span>
-													{% if pedido.fecha_recogida %}
+                                                <div class="address-item name">
+                                                    <span class="title">Estado</span>
+                                                    <span class="content">{{ pedido.get_estado_display }} </span>
+                                                    <button type="button" id='historic_button' style="padding: 3px 6px"
+                                                            class="btn btn-default .btn-xs">
+                                                        <span class="glyphicon glyphicon-list small"></span>
+                                                    </button>
+                                                </div>
+                                                <div class="address-item name">
+                                                    <span class="title">Recogida estimada</span>
+                                                    <span class="content">{{ pedido.recogida_estimada|date:'D, d N H:i:s' }}</span>
+                                                </div>
+                                                <div class="address-item name">
+                                                    <span class="title">Recogida</span>
+                                                    {% if pedido.fecha_recogida %}
                                                         <span class="content">{{ pedido.fecha_recogida|date:'D, d N H:i:s' }}</span>
                                                     {% else %}
                                                         <span class="content">No recogido</span>
                                                     {% endif %}
-												</div>
-												<div class="address-item">
-													<span class="title">Alumno/s</span>
+                                                </div>
+                                                <div class="address-item">
+                                                    <span class="title">Alumno/s</span>
                                                     <span class="content">
                                                     {% for alumno in alumnos %}
-													    #{{ alumno.id}} {{ alumno.user.get_full_name }}
+                                                        #{{ alumno.id }} {{ alumno.user.get_full_name }}
                                                         <br>
                                                     {% endfor %}
                                                     </span>
-												</div>
-												<div class="address-item">
-													<span class="title">Telefono</span>
+                                                </div>
+                                                <div class="address-item">
+                                                    <span class="title">Telefono</span>
 													<span class="content">
                                                         {% for alumno in alumnos %}
-													        #{{ alumno.id}} ---> {{ alumno.telefono }}
+                                                            #{{ alumno.id }} ---> {{ alumno.telefono }}
                                                             <br>
                                                         {% endfor %}
                                                     </span>
-												</div>
-												<div class="address-item">
-													<span class="title">Reseña</span>
-													{% if pedido.hasResena %}
-                                                        <span class="content">Recibida</span>
-                                                    {% else %}
-                                                        <span class="content">No recibida</span>
-                                                    {% endif %}
-												</div>
-											</div>
-										</div>
-									</div>
-                                    <div class="order-address">
-										<div id="order_payment" class="col-md-6 address-items">
-											<h2 class="address-title">Ofertas Seleccionadas</h2>
-											{% if ofertas %}
-                                                {% for oferta in ofertas %}
-                                                    <div class="address-content">
-                                                        <div class="address-item">
-                                                            <span class="title">{{ oferta.quantity }}</span>
-                                                            <span class="content">{{ oferta.oferta.titulo }}</span>
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            {% else %}
-                                                <div class="address-content">
-                                                    <div class="address-item">
-                                                        Ninguna oferta seleccionada
-                                                    </div>
                                                 </div>
-                                            {% endif %}
-										</div>
-                                        {% if menus %}
-                                            <div id="order_payment" class="col-md-6 address-items">
-                                                <h2 class="address-title">Menus Seleccionados</h2>
-                                                {% for menu in menus %}
-                                                    <div class="address-content">
-                                                        <div class="address-item">
-                                                            <span class="title">{{ menu.quantity }}</span>
-                                                            <span class="content">{{ menu.menu.nombre }}</span>
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
+{#                                                <div class="address-item">#}
+{#                                                    <span class="title">Reseña</span>#}
+{#                                                    {% if pedido.hasResena %}#}
+{#                                                        <span class="content">Recibida</span>#}
+{#                                                    {% else %}#}
+{#                                                        <span class="content">No recibida</span>#}
+{#                                                    {% endif %}#}
+{#                                                </div>#}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="order-address">
+
+                                        {% if ofertas %}
+                                            <div id="order_payment" class="col-md-6 order-info">
+                                                <table>
+                                                    <thead>
+                                                        <th>Cantidad</th>
+                                                        <th>Oferta</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for oferta in ofertas %}
+                                                            <tr>
+                                                                <td>{{ oferta.quantity }}</td>
+                                                                <td>{{ oferta.oferta.titulo }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                    <tfoot>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
                                         {% else %}
                                             <div id="order_payment" class="col-md-6 address-items">
-                                                <h2 class="address-title">Menus Seleccionados</h2>
-                                                    <div class="address-content">
-                                                        <div class="address-item">
-                                                            Ningún menu seleccionado
-                                                        </div>
-                                                    </div>
+                                            <h2 class="address-title">Oferta Seleccionadas</h2>
+                                            <div class="address-content">
+                                                <div class="address-item">
+                                                    Ninguna oferta seleccionada
+                                                </div>
+                                            </div>
+                                            </div>
                                         {% endif %}
-										</div>
-									</div>
-									<div class="order-info">
-										<div class="order-info-inner">
-											<table id="order_details">
-												<thead>
-													<tr>
-														<th>Producto</th>
-														<th>Producto ID</th>
-														<th>Precio</th>
-														<th class="center">Cantidad</th>
-														<th class="total">Subtotal</th>
-													</tr>
-												</thead>
-												<tbody>
-                                                        {% for producto in productos %}
-                                                            <tr class="odd">
-                                                                <td class="td-product">
-                                                                    <a href="./ver-producto/{{ producto.producto.id }}" align="center" title="">{{ producto.producto.nombre }}</a>
-                                                                </td>
-                                                                <td class="sku note" align="center">#{{ producto.producto.id }}</td>
-                                                                <td class="money"><span class="money" data-currency="EUR">{{ producto.precio_producto }}€</span></td>
-                                                                <td class="quantity" align="center">{{ producto.quantity }}</td>
-                                                                <td class="total" align="center"><span class="money" data-currency="EUR">{{ producto.subtotal }}€</span></td>
-                                                            </tr>
-                                                        {% endfor %}
-
-                                                        {% for menu in menus %}
-                                                            <tr class="odd">
-                                                                <td class="td-product">
-                                                                    <a href="./ver-menu/{{ menu.menu.id }}" align="center" title="">{{ menu.menu.nombre }}</a>
-                                                                </td>
-                                                                <td class="sku note" align="center">#{{ menu.menu.id }}</td>
-                                                                <td class="money"><span class="money" data-currency="EUR">{{ menu.precio_menu }}€</span></td>
-                                                                <td class="quantity" align="center">{{ menu.quantity }}</td>
-                                                                <td class="total" align="center"><span class="money" data-currency="EUR">{{ menu.subtotal }}€</span></td>
-                                                            </tr>
-                                                        {% endfor %}
 
 
-                                                        {% for oferta in ofertas %}
-                                                            <tr class="odd">
-                                                                <td class="td-product">
-                                                                    <a href="./ver-oferta/{{ oferta.oferta.id }}" align="center" title="">{{ oferta.oferta.titulo }}</a>
-                                                                </td>
-                                                                <td class="sku note" align="center">#{{ oferta.oferta.id }}</td>
-                                                                <td class="money"><span class="money" data-currency="EUR">{{ oferta.precio_oferta }}€</span></td>
-                                                                <td class="quantity" align="center">{{ oferta.quantity }}</td>
-                                                                <td class="total" align="center"><span class="money" data-currency="EUR">{{ oferta.subtotal }}€</span></td>
-                                                            </tr>
-                                                        {% endfor %}
+                                        {% if menus %}
+                                            <div id="order_payment" class="col-md-6 order-info">
+                                                <table>
+                                                    <thead>
+                                                    <th>Cantidad</th>
+                                                    <th>Menu</th>
+                                                    </thead>
 
-												</tbody>
-												<tfoot>
-                                                    {% if not productos %}
-                                                        <tr class="order_summary order_total">
-                                                            <td class="td-label" colspan="4">Ningún producto seleccionado</td>
+                                                    <tbody>
+                                                    {% for menu in menus %}
+                                                        <tr>
+                                                            <td>{{ menu.quantity }}</td>
+
+                                                            <td>{{ menu.menu.nombre }}</td>
+
                                                         </tr>
-                                                    {% endif %}
-													<tr class="order_summary order_total">
-														<td class="td-label" colspan="4">Total</td>
-														<td class="total"><span class="money" align="center" data-currency="EUR">{{ pedido.importe_total }}€</span></td>
-													</tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                    <tfoot>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <div id="order_payment" class="col-md-6 address-items">
+                                            <h2 class="address-title">Menus Seleccionados</h2>
+                                            <div class="address-content">
+                                                <div class="address-item">
+                                                    Ningún menu seleccionado
+                                                </div>
+                                            </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
 
-												</tfoot>
+                                    <br><br>
 
-											</table>
-										</div>
-									</div>
-                                <br><br>
-                                <button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/editar-pedido/{{ pedido.id }}'">Editar pedido</button><br><br>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-		</main>
-	</div>
+                                    <div class="order-info">
+                                        <div class="order-info-inner">
+                                            <table id="order_details">
+                                                <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Producto ID</th>
+                                                    <th>Precio</th>
+                                                    <th class="center">Cantidad</th>
+                                                    <th class="total">Subtotal</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for producto in productos %}
+                                                    <tr class="odd">
+                                                        <td class="td-product">
+                                                            <a href="./ver-producto/{{ producto.producto.id }}"
+                                                               align="center"
+                                                               title="">{{ producto.producto.nombre }}</a>
+                                                        </td>
+                                                        <td class="sku note" align="center">
+                                                            #{{ producto.producto.id }}</td>
+                                                        <td class="money"><span class="money"
+                                                                                data-currency="EUR">{{ producto.precio_producto }}€</span>
+                                                        </td>
+                                                        <td class="quantity" align="center">{{ producto.quantity }}</td>
+                                                        <td class="total" align="center"><span class="money"
+                                                                                               data-currency="EUR">{{ producto.subtotal }}€</span>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+
+                                                {% for menu in menus %}
+                                                    <tr class="odd">
+                                                        <td class="td-product">
+                                                            <a href="./ver-menu/{{ menu.menu.id }}" align="center"
+                                                               title="">MENU: {{ menu.menu.nombre }}</a>
+                                                        </td>
+                                                        <td class="sku note" align="center">#{{ menu.menu.id }}</td>
+                                                        <td class="money"><span class="money"
+                                                                                data-currency="EUR">{{ menu.precio_menu }}€</span>
+                                                        </td>
+                                                        <td class="quantity" align="center">{{ menu.quantity }}</td>
+                                                        <td class="total" align="center"><span class="money"
+                                                                                               data-currency="EUR">{{ menu.subtotal }}€</span>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+
+
+                                                {% for oferta in ofertas %}
+                                                    <tr class="odd">
+                                                        <td class="td-product">
+                                                            <a href="./ver-oferta/{{ oferta.oferta.id }}" align="center"
+                                                               title="">OFERTA: {{ oferta.oferta.titulo }}</a>
+                                                        </td>
+                                                        <td class="sku note" align="center">#{{ oferta.oferta.id }}</td>
+                                                        <td class="money"><span class="money"
+                                                                                data-currency="EUR">{{ oferta.precio_oferta }}€</span>
+                                                        </td>
+                                                        <td class="quantity" align="center">{{ oferta.quantity }}</td>
+                                                        <td class="total" align="center"><span class="money"
+                                                                                               data-currency="EUR">{{ oferta.subtotal }}€</span>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+
+                                                </tbody>
+                                                <tfoot>
+                                                {% if not productos and not menus and not ofertas %}
+                                                    <tr class="order_summary order_total">
+                                                        <td class="td-label" colspan="4">Ningún producto seleccionado
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                <tr class="order_summary order_total">
+                                                    <td class="td-label" colspan="4">Total</td>
+                                                    <td class="total"><span class="money" align="center"
+                                                                            data-currency="EUR">{{ pedido.importe_total }}€</span>
+                                                    </td>
+                                                </tr>
+
+                                                </tfoot>
+
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <br><br>
+                                    <button type="button" class="btn btn-default" style="margin:auto; display:block;"
+                                            onclick="location.href='/editar-pedido/{{ pedido.id }}'">Editar pedido
+                                    </button>
+                                    <br><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
 
-    <!-- Modal content -->
-    <div class="modal-content">
-    <div class="modal-header">
-      <span class="close">&times;</span>
-      <h2>Historico de estados</h2>
-    </div>
-    <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Fecha</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Usuario</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for statelog in statelogs %}
-                <tr>
-                  <th scope="row">{{ statelog.timestamp }}</th>
-                  <td>{{ statelog.state}}</td>
-                  <td>@{{ statelog.by.username }}</td>
-                </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
-    <div class="modal-footer">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Historico de estados</h2>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Usuario</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for statelog in statelogs %}
+                        <tr>
+                            <th scope="row">{{ statelog.timestamp }}</th>
+                            <td>{{ statelog.state }}</td>
+                            <td>@{{ statelog.by.username }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
 
-    </div>
-    </div>
+            </div>
+        </div>
 
     </div>
 
     <script>
-    // Get the modal
-    var modal = document.getElementById('myModal');
+        // Get the modal
+        var modal = document.getElementById('myModal');
 
-    // Get the button that opens the modal
-    var btn = document.getElementById("historic_button");
+        // Get the button that opens the modal
+        var btn = document.getElementById("historic_button");
 
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
 
-    // When the user clicks the button, open the modal
-    btn.onclick = function() {
-    modal.style.display = "block";
-    }
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
 
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-    modal.style.display = "none";
-    }
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
 
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-    }
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
-	
+
 {% endblock content %}

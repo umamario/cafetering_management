@@ -10,16 +10,16 @@
                         <div class="row">
                             <div class="page-heading-inner heading-group">
                                 <div class="breadcrumb-group">
-                                    <h1 class="hidden">My Account</h1>
+                                    <h1 class="hidden">Mi cuenta</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                href="./index" title="Fast Food" itemprop="url"><span
                                                 itemprop="title"><i class="fa fa-home"></i></span></a>
 										</span>
                                         <span class="arrow-space"></span>
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-											<a href="./account.html" title="My Account" itemprop="url"><span
-                                                    itemprop="title">My Account</span></a>
+											<a href="./cuenta" title="Mi cuenta" itemprop="url"><span
+                                                    itemprop="title">Mi cuenta</span></a>
 										</span>
                                     </div>
                                 </div>
@@ -36,86 +36,36 @@
                                 <div class="account-content">
                                     <div class="account-info">
                                         <div class="account-details col-sm-6">
-                                            <h3 class="details-title">ACCOUNT DETAILS</h3>
+                                            <h3 class="details-title">Detalles de su cuenta</h3>
                                             <div class="details-content">
                                                 <div class="details-item name">
-                                                    <span class="title">Name:</span>
-                                                    <span class="content">Jin Alkaid</span>
+                                                    <span class="title">Nombre:</span>
+                                                    <span class="content">{{ user.get_full_name }}</span>
                                                 </div>
                                                 <div class="details-item">
                                                     <span class="title">E-mail:</span>
-                                                    <a class="content" href="jin@gmail.com">jin@gmail.com</a>
+                                                    <a class="content">{{ user.email }}</a>
                                                 </div>
                                                 <div class="details-item">
-                                                    <span class="title">Your address:</span>
-                                                    <address class="content">Đường trục, Ho Chi Minh, Vietnam</address>
+                                                    <span class="title">Facultad</span>
+                                                    {% for cafeteria in cafeterias %}
+                                                        <address class="content">{{ cafeteria.facultad }}. {{ cafeteria.universidad.nombre }}</address>
+                                                    {% endfor %}
                                                 </div>
                                                 <div class="details-item">
-                                                    <span class="title">Your phone:</span>
-                                                    <a class="content" href="tel:11111">11111</a>
+                                                    <span class="title">Rol</span>
+                                                    <a class="content">{{ empleado.get_tipo_empleado_display }}</a>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="account-link col-sm-6">
-                                            <h3 class="link-title">My Account</h3>
-                                            <div class="link-content">
-                                                <ul class="link-list">
-                                                    <li class="item">
-                                                        <a href="./index.html">Logout</a>
-                                                    </li>
-                                                    <li class="item">
-                                                        <a href="./addresses.html">Modify your address book entries</a>
-                                                    </li>
-                                                    <li class="item">
-                                                        <a href="./wish-list.html">Modify your wishlist</a>
-                                                    </li>
-                                                </ul>
+
+                                            <h3 class="link-title" align="center">Acciones</h3>
+                                            <div class="link-content" align="center">
+                                                <button class="btn btn-default" onclick="$(this).sendPasswordEmail();">Regenerar contraseña</button>
+                                                <br><br>
+                                                <button class="btn btn-default" onclick="location.href='mailto:modificaciones@cafetering.es'" >Requirir modificación</button>
                                             </div>
-                                        </div>
-                                        <div class="account-banner col-sm-6">
-                                            <a href=""><img src="static/assets/images/370x130.png" alt=""></a>
-                                        </div>
-                                        <div class="account-banner col-sm-6">
-                                            <a href=""><img src="static/assets/images/370x130.png" alt=""></a>
-                                        </div>
-                                    </div>
-                                    <div class="account-orders">
-                                        <div class="account-orders-inner">
-                                            <table>
-                                                <thead>
-                                                <tr>
-                                                    <th class="order_number">Order</th>
-                                                    <th class="date">Date</th>
-                                                    <th class="payment_status">Payment Status</th>
-                                                    <th class="fulfillment_status">Fulfillment Status</th>
-                                                    <th class="total">Total</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr class="odd cancelled_order">
-                                                    <td class="td-name"><a href="./order.html" title="">#1002</a></td>
-                                                    <td class="td-note"><span class="note">11 Sep 06:42</span></td>
-                                                    <td class="td-authorized"><span class="status_voided">Voided</span>
-                                                    </td>
-                                                    <td class="td-unfulfilled"><span class="status_unfulfilled">Unfulfilled</span>
-                                                    </td>
-                                                    <td class="td-total"><span class="total"><span class="money"
-                                                                                                   data-currency-usd="$6,277.80">$6,277.80</span></span>
-                                                    </td>
-                                                </tr>
-                                                <tr class="even ">
-                                                    <td class="td-name"><a href="./order.html" title="">#1001</a></td>
-                                                    <td class="td-note"><span class="note">24 Jul 22:32</span></td>
-                                                    <td class="td-authorized"><span
-                                                            class="status_authorized">Authorized</span></td>
-                                                    <td class="td-unfulfilled"><span class="status_unfulfilled">Unfulfilled</span>
-                                                    </td>
-                                                    <td class="td-total"><span class="total"><span class="money"
-                                                                                                   data-currency-usd="$294.90">$294.90</span></span>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -126,5 +76,16 @@
             </section>
         </main>
     </div>
+<script>
+        $.fn.sendPasswordEmail = function () {
+            $.ajax({
+                url: "/ajax/reset_password",
+                dataType: 'json',
+                success: function (data) {
+                    alert("Mensaje enviado correctamente");
+                }
+            });
+        };
 
+</script>
 {% endblock content %}

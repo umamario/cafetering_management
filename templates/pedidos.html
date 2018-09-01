@@ -17,7 +17,7 @@
                                     <h1 class="hidden">My Account</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                href="./index" title="Fast Food" itemprop="url"><span
                                                 itemprop="title"><i class="fa fa-home"></i></span></a>
 										</span>
                                         <span class="arrow-space"></span>
@@ -36,11 +36,48 @@
                 <div class="account-wrapper">
                     <div class="container">
                         <div class="row">
+                        <form method="post" id="main_form" enctype="multipart/form-data" class="well form-horizontal"> {% csrf_token %}
+                                              <div class="form-group">
+                                                <label class="col-sm-2 control-label">Rango fechas</label>
+                                                <div class="col-sm-4">
+                                                  <div class="input-group input-daterange">
+                                                    <input path="desde" name="range_from"  value="{{ from_date |date:'d/m/Y' }}" class="form-control">
+                                                    <span class="input-group-addon">hasta</span>
+                                                    <input path="hasta" name="range_to" value="{{ end_date |date:'d/m/Y' }}" class="form-control">
+                                                  </div>
+                                                </div>
+                                                <label class="col-sm-2 control-label">Estado del pedido</label>
+                                                <div class="col-sm-4">
+                                                    <select name="estado_pedido" class="mdb-select" multiple>
+                                                        {% if is_filtered %}
+                                                            <option value="all">Todos</option>
+                                                            {% for estado in estados %}
+                                                                {% if estado in estado_pedido %}
+                                                                    <option value="{{ estado }}" selected>{{ estado }}</option>
+                                                                {% else %}
+                                                                    <option value="{{ estado }}">{{ estado }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            <option value="all" selected>Todos</option>
+                                                            {% for estado in estados %}
+                                                              <option value="{{ estado }}">{{ estado }}</option>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                               </div>
+                                              <div class="row">
+                                                  <div class="col-sm-offset-2 col-sm-10" align="center">
+                                                      <button class="btn btn-primary" name="action" value="filtrar" type="submit">Filtrar</button>
+                                                      <button class="btn btn-primary" name="action" value="exportar" type="submit">Exportar</button>
+                                                  </div>
+                                              </div>
+                                            </form>
                             <div class="account-inner">
                                 <div class="account-content">
                                     <div class="account-orders">
                                         <div class="account-orders-inner">
-                                            <button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/nuevo-pedido'">Crear nuevo</button><br><br>
                                             <table>
                                                 <thead>
                                                 <tr>
@@ -56,7 +93,7 @@
                                                     <tr class="odd cancelled_order">
                                                         <td class="td-name"><a href="./order.html" title="">{{ pedido.id}}</a></td>
                                                         <td class="td-note"><span class="note">{{ pedido.estado }}</span></td>
-                                                        <td class="td-authorized"><span class="status_voided">{{ pedido.recogida_estimada }}</span>
+                                                        <td class="td-authorized"><span class="status_voided">{{ pedido.recogida_estimada | date:'d/m/Y h:m'}}</span>
                                                         </td>
                                                         <td class="td-total"><span class="total"><span class="money"
                                                                                                        data-currency-usd="$6,277.80">{{ pedido.importe }}€</span></span>

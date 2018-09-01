@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django_fsm import FSMField, transition
 from django.core.validators import RegexValidator
+from django_fsm_log.decorators import fsm_log_by
 
 ESTADO_CHOICES = (
     (0, 'Inactivo'),
@@ -108,22 +109,26 @@ class Oferta(models.Model):
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     valido_desde = models.DateTimeField(default=timezone.now)
     valido_hasta = models.DateField(null=True, blank=True)
+    precio_oferta = models.FloatField(null=True, blank=True)
 
     def setPrecioOferta(self):
         for product in self.productos.all():  # It does not work when the offer is created from admin
             if self.descuento_porcentual:
                 product.precio_oferta = product.precio * (1 - (float(self.descuento_porcentual) / 100))
-                product.save()
             elif self.descuento_numerico:
                 product.precio_oferta = product.precio - (float(self.descuento_numerico) / self.productos.count())
-                product.save()
             else:
                 raise ValueError('Offer does not have discount set for PRODUCT ID %d' % producto.id)
+            product.save()
 
     def save(self, *args, **kwargs):
         super(Oferta, self).save(*args, **kwargs)
+        from django.db.models import Sum
         if self.descuento_porcentual or self.descuento_numerico:
             self.setPrecioOferta()
+            if not self.precio_oferta:
+                self.precio_oferta = self.productos.aggregate(Sum('precio_oferta'))['precio_oferta__sum']
+                super(Oferta, self).save(*args, **kwargs)
 
 
 class Menu(models.Model):
@@ -135,6 +140,9 @@ class Menu(models.Model):
     imagen = models.ImageField(upload_to='menu/', null=True, blank=True)
     precio = models.FloatField(null=True, blank=True)
     valido_hasta = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return "<Menu: %s>" % self.nombre
 
 
 STATES_STR = ('En cola', 'En proceso', 'Preparado', 'Entregado', 'No recogido', 'Cancelado')
@@ -155,6 +163,20 @@ class Pedido(models.Model):
     resenas = models.ManyToManyField(Resena, blank=True)
     importe = models.FloatField(null=True, blank=True)
     codigo_confirmacion = models.CharField(unique=True, null=True, blank=True, max_length=10)
+
+    def set_estado(self, new_estado, user):
+        if new_estado == u"Entregado":
+            self.recogido(by=user)
+        elif new_estado == u"Cancelado":
+            self.cancelar(by=user)
+        elif self.estado == u"En cola" and new_estado == u"En proceso":
+            self.preparando(by=user)
+        elif self.estado == u"En proceso" and new_estado == u"Preparado":
+            self.preparado(by=user)
+        elif self.estado == u"Preparado" and new_estado == u"No recogido":
+            self.no_recogido(by=user)
+        else:
+            self.estado = new_estado
 
     @property
     def hasResena(self):
@@ -196,6 +218,9 @@ class Pedido(models.Model):
     def importe_total(self):
         return self.importe_productos + self.importe_ofertas + self.importe_menus
 
+    def __str__(self):
+        return "<Pedido #%d ; %s>" % (self.id, self.get_estado_display())
+
     def save(self, *args, **kwargs):
         self.importe = self.importe_total
 
@@ -214,22 +239,28 @@ class Pedido(models.Model):
             image_file = InMemoryUploadedFile(buffer, None, 'qr.png', 'image/png', buffer.len, None)
             self.qr.save(u'qr-%d.png' % self.id, image_file)
 
-
+    @fsm_log_by
     @transition(field=estado, source=['En cola'], target='En proceso')
-    def start(self):
-        """
-             This method will contain the action that needs to be taken once the
-             state is changed. Such as notifying Users.
-        """
+    def preparando(self, by=None):
         pass
 
-    @transition(field=estado, source='Preparado', target='Entregado')
-    def resolve(self):
-        """
-            This method will contain the action that needs to be taken once the
-            state is changed. Such as notifying Users
-            Help on https://hashedin.com/blog/a-guide-to-managing-finite-state-machine-using-django-fsm/
-        """
+    @fsm_log_by
+    @transition(field=estado, source='*', target='Cancelado')
+    def cancelar(self, by=None):
+        pass
+
+    @fsm_log_by
+    @transition(field=estado, source='*', target='Entregado')
+    def recogido(self, by=None):
+        pass
+
+    @transition(field=estado, source='Preparado', target='No recogido')
+    def no_recogido(self, by=None):
+        pass
+
+    @fsm_log_by
+    @transition(field=estado, source='En proceso', target='Preparado')
+    def preparado(self, by=None):
         pass
 
 
@@ -253,6 +284,9 @@ class MenuPedido(models.Model):
     @property
     def subtotal(self):
         return self.precio_menu * self.quantity
+
+    def __str__(self):
+        return "<MenuPedido: %s;#%d>" % (self.menu.nombre, self.pedido.id)
 
 
 class OfertaPedido(models.Model):

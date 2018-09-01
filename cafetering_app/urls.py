@@ -29,16 +29,17 @@ urlpatterns = [
     url(r'^index$', views.index, name='index'),
     url(r'^pedidos$', views.pedidos_view, name='pedidos_view'),
 
-    url(r'^ver-pedido/(?P<pedido_pk>[0-9]+)/$', views.pedido_view, name='pedido_view'),
-    url(r'^ver-oferta/(?P<oferta_pk>[0-9]+)/$', views.oferta_view, name='oferta_view'),
-    url(r'^ver-menu/(?P<menu_pk>[0-9]+)/$', views.menu_view, name='menu_view'),
-    url(r'^ver-categoria/(?P<categoria_pk>[0-9]+)/$', views.categoria_view, name='categoria_view'),
-    url(r'^ver-producto/(?P<producto_pk>[0-9]+)/$', views.producto_view, name='producto_view'),
+    url(r'^(?i)ver-pedido/(?P<pedido_pk>[0-9]+)/$', views.pedido_view, name='pedido_view'),
+    url(r'^(?i)ver-oferta/(?P<oferta_pk>[0-9]+)/$', views.oferta_view, name='oferta_view'),
+    url(r'^(?i)ver-menu/(?P<menu_pk>[0-9]+)/$', views.menu_view, name='menu_view'),
+    url(r'^(?i)ver-categoria/(?P<categoria_pk>[0-9]+)/$', views.categoria_view, name='categoria_view'),
+    url(r'^(?i)ver-producto/(?P<producto_pk>[0-9]+)/$', views.producto_view, name='producto_view'),
 
     url(r'^nueva-oferta/?$', views.nueva_oferta_view, name='nueva_oferta_view'),
     url(r'^nuevo-menu/?$', views.nuevo_menu_view, name='nuevo_menu_view'),
     url(r'^nueva-categoria/?$', views.nueva_categoria_view, name='nueva_categoria_view'),
     url(r'^nuevo-pedido/?$', views.nuevo_pedido_view, name='nueva_pedido_view'),
+    url(r'^nuevo-producto/?$', views.nuevo_producto_view, name='nuevo_producto_view'),
 
     url(r'^editar-pedido/(?P<pedido_pk>[0-9]+)/$', views.editar_pedido_view, name='editar_pedido_view'),
     url(r'^editar-oferta/(?P<oferta_pk>[0-9]+)/$', views.editar_oferta_view, name='editar_oferta_view'),
@@ -57,11 +58,20 @@ urlpatterns = [
     url(r'^productos$', views.productos_view, name='productos_view'),
     url(r'^categorias$', views.categorias_view, name='categorias_view'),
     url(r'^logout$', views.logout_view, name='logout_view'),
-    url(r'^test$', views.test_view, name='test_view'),
+    url(r'^cuenta$', views.cuenta_view, name='cuenta_view'),
+    url(r'^informes$', views.informes_view, name='informes_view'),
+    url(r'^ayuda$', views.ayuda_view, name='ayuda_view'),
+    url(r'^buscar$', views.buscar_view, name='buscar_view'),
+    # url(r'^test$', views.test_view, name='test_view'),
 
     url(r'^ajax/autocomplete_id_producto/$', views.autocomplete_id_producto, name='autocomplete_id_producto'),
     url(r'^ajax/autocomplete_nombre_producto/$', views.autocomplete_nombre_producto, name='autocomplete_nombre_producto'),
+    url(r'^ajax/autocomplete_oferta/$', views.autocomplete_oferta_view, name='autocomplete_oferta_view'),
+    url(r'^ajax/autocomplete_menu/$', views.autocomplete_menu_view, name='autocomplete_menu_view'),
+    url(r'^ajax/autocomplete_nombre_alergeno/$', views.autocomplete_alergeno_view, name='autocomplete_alergeno_view'),
+    url(r'^ajax/autocomplete_nombre_etiqueta/$', views.autocomplete_etiqueta_view, name='autocomplete_etiqueta_view'),
     url(r'^ajax/remove_product_from_list/$', views.remove_product_from_list, name='remove_product_from_list'),
+    url(r'^ajax/reset_password/$', views.reset_password, name='reset_password'),
 ]
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

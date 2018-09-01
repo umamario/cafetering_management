@@ -13,7 +13,7 @@
                                     <h1 class="hidden">Ver oferta #{{ oferta.id }}</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                href="./index" title="Fast Food" itemprop="url"><span
                                                 itemprop="title"><i class="fa fa-home"></i></span></a>
 										</span>
                                         <span class="arrow-space"></span>
@@ -80,6 +80,7 @@
                                                                   name="descripcion" disabled="disabled" rows="2"
                                                                   placeholder="Escriba la descripción">{{ oferta.descripcion }}</textarea>
                                                     <br>
+                                                    <label>&nbsp&nbsp&nbsp&nbspVálida Hasta</label>
                                                     <div class="trio">
                                                         <input id="trio1" type="text" name="valido_hasta"
                                                                style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
@@ -142,6 +143,12 @@
                                                     {% endfor %}
                                                 </tbody>
                                                 <tfoot>
+                                                    {% if not productos %}
+                                                    <tr class="order_summary order_total">
+                                                        <td class="td-label" colspan="4">Ningún producto seleccionado
+                                                        </td>
+                                                    </tr>
+                                                    {% endif %}
                                                 </tfoot>
                                             </table>
                                         </div>

@@ -13,7 +13,7 @@
                                     <h1 class="hidden">Ver menu #{{ menu.id }}</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                                href="./index.html" title="Fast Food" itemprop="url"><span
+                                                href="./index" title="Fast Food" itemprop="url"><span
                                                 itemprop="title"><i class="fa fa-home"></i></span></a>
 										</span>
                                         <span class="arrow-space"></span>
@@ -134,6 +134,12 @@
                                                     {% endfor %}
                                                     </tbody>
                                                     <tfoot>
+                                                        {% if not productos %}
+                                                        <tr class="order_summary order_total">
+                                                            <td class="td-label" colspan="4">Ningún producto seleccionado
+                                                            </td>
+                                                        </tr>
+                                                        {% endif %}
                                                     </tfoot>
                                                 </table>
                                             </div>

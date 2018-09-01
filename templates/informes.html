@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% block content %}
+
+	<!-- Main Content -->
+	<div class="page-container" id="PageContainer">
+		<main class="main-content" id="MainContent" role="main">
+			<section class="heading-content">
+				<div class="heading-wrapper">
+					<div class="container">
+						<div class="row">
+							<div class="page-heading-inner heading-group">
+								<div class="breadcrumb-group">
+									<h1 class="hidden">Informes</h1>
+									<div class="breadcrumb clearfix">
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="./index" title="Informes" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a>
+										</span>
+										<span class="arrow-space"></span>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+											<a href="./informes" title="Informes" itemprop="url"><span itemprop="title">Informes</span></a>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="page-content page-lookbook">
+                <div class="content">
+                    <form method="post" id="main_form" enctype="multipart/form-data" class="well form-horizontal"> {% csrf_token %}
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">Recurso</label>
+                        <div class="col-sm-4">
+                            <select name="recurso" class="form-control">
+                                {% if showPics %}
+                                    {% if recurso == 'orders' %}
+                                      <option value="pie_chart">Diagrama de Pastel</option>
+                                      <option value="orders" selected>Pedidos</option>
+                                    {% else %}
+                                      <option value="pie_chart" selected>Diagrama de Pastel</option>
+                                      <option value="orders">Pedidos</option>
+                                    {% endif %}
+                                {% else %}
+                                  <option value="pie_chart" selected>Diagrama de Pastel</option>
+                                  <option value="orders">Pedidos</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <label class="col-sm-2 control-label">Estado</label>
+                        <div class="col-sm-4">
+                            <select name="estado_objecto" class="form-control">
+                                {% if showPics %}
+                                    {% if estados_select == 2 %}
+                                      <option selected value="all">Todo</option>
+                                      <option value="1">Activado</option>
+                                      <option value="0">Desactivado</option>
+                                    {% elif estados_select == 1 %}
+                                      <option value="all">Todo</option>
+                                      <option selected value="1">Activado</option>
+                                      <option value="0">Desactivado</option>
+                                    {% else %}
+                                      <option value="all">Todo</option>
+                                      <option value="1">Activado</option>
+                                      <option selected value="0">Desactivado</option>
+                                    {% endif %}
+                                {% else %}
+                                      <option value="all" selected>Todo</option>
+                                      <option value="1">Activado</option>
+                                      <option value="0">Desactivado</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">Rango fechas</label>
+                        <div class="col-sm-4">
+                          <div class="input-group input-daterange">
+                            <input path="desde" name="range_from"  value="{{ from_date |date:'d/m/Y' }}" class="form-control">
+                            <span class="input-group-addon">hasta</span>
+                            <input path="hasta" name="range_to" value="{{ end_date |date:'d/m/Y' }}" class="form-control">
+                          </div>
+                        </div>
+                        <label class="col-sm-2 control-label">Estado del pedido</label>
+                        <div class="col-sm-4">
+                            <select name="estado_pedido" class="mdb-select" multiple>
+                                {% if showPics %}
+                                    <option value="all">Todos</option>
+                                    {% for estado in estados %}
+                                        {% if estado in estado_pedido %}
+                                            <option value="{{ estado }}" selected>{{ estado }}</option>
+                                        {% else %}
+                                            <option value="{{ estado }}">{{ estado }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="all" selected>Todos</option>
+                                    {% for estado in estados %}
+                                      <option value="{{ estado }}">{{ estado }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                       </div>
+                      <div class="row">
+                          <div class="col-sm-offset-2 col-sm-10" align="center">
+                              <button class="btn btn-primary" type="submit">Filtrar</button>
+                          </div>
+                      </div>
+                    </form>
+                </div>
+                {% if showPics %}
+                    {% if recurso == 'pie_chart' %}
+				        <div class="page-wrapper">
+					<div class="container">
+						<div class="row">
+							<div class="page-inner">
+								<div id="shopify-section-lookbook-template" class="shopify-section">
+									<div class="lookbook-content-inner">
+										<div class="lookbook-content">
+											<div class="lookbook-item">
+												<div class="item">
+													<div class="lb-element">
+                                                        <a class="group-img-1" rel="lookbook">
+                                                            <img src="/media/graficos/productopedido.jpg" alt="lookbook-img">
+														</a>
+													</div>
+												</div>
+											</div>
+											<div class="lookbook-item">
+												<div class="item">
+													<div class="lb-element">
+														<a class="group-img-2" rel="lookbook">
+															<img src="/media/graficos/menupedido.jpg" alt="lookbook-img">
+														</a>
+													</div>
+												</div>
+											</div>
+											<div class="lookbook-item">
+												<div class="item">
+													<div class="lb-element">
+														<a class="group-img-3" rel="lookbook">
+															<img src="/media/graficos/categoriapedido.jpg" alt="lookbook-img">
+														</a>
+													</div>
+												</div>
+											</div>
+											<div class="lookbook-item">
+												<div class="item">
+													<div class="lb-element">
+														<a class="group-img-4" rel="lookbook">
+															<img src="/media/graficos/ofertapedido.jpg" alt="lookbook-img">
+														</a>
+													</div>
+												</div>
+											</div>
+{#											<div class="lookbook-item">#}
+{#												<div class="item">#}
+{#													<div class="lb-element">#}
+{#														<a class="group-img-5" rel="lookbook" href="static/assets/images/1170x1170.png">#}
+{#															<img src="static/assets/images/1170x1170.png" alt="lookbook-img">#}
+{#														</a>#}
+{#													</div>#}
+{#												</div>#}
+{#											</div>#}
+{#											<div class="lookbook-item">#}
+{#												<div class="item">#}
+{#													<div class="lb-element">#}
+{#														<a class="group-img-6" rel="lookbook" href="static/assets/images/1170x1170.png">#}
+{#															<img src="static/assets/images/1170x1170.png" alt="lookbook-img">#}
+{#														</a>#}
+{#													</div>#}
+{#												</div>#}
+{#											</div>#}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+                    {% else %}
+                        <div class="page-wrapper">
+					<div class="container">
+						<div class="row">
+							<div class="page-inner">
+								<div id="shopify-section-lookbook-template" class="shopify-section">
+									<div class="lookbook-content-inner">
+										<div class="lookbook-content">
+											<div class="lookbook-item">
+												<div class="item">
+													<div class="lb-element">
+                                                        <a class="group-img-1" rel="lookbook">
+                                                            <img src="/media/graficos/pedidosporfecha.jpg" alt="lookbook-img">
+														</a>
+													</div>
+												</div>
+											</div>
+											<div class="lookbook-item">
+												<div class="item">
+													<div class="lb-element">
+														<a class="group-img-2" rel="lookbook">
+															<img src="/media/graficos/pedidosestado.jpg" alt="lookbook-img">
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+                    {% endif %}
+                {% endif %}
+			</section>
+		</main>
+	</div>
+	
+{% endblock content %}

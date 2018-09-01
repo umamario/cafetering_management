@@ -251,7 +251,7 @@
                                         </div>
                                         <div class="nav-icon">
                                             <div class="m_search search-icon">
-                                                <a href="" data-toggle="modal" data-target="#lightbox-search">
+                                                <a href="/buscar" data-toggle="modal">
                                                     <i class="fa fa-search"></i>
                                                 </a>
                                             </div>
@@ -430,33 +430,32 @@
         </div>
     </footer>
 
-    <!-- Modal Search-->
-    <div class="modal fade" id="lightbox-search" tabindex="-1" role="dialog" aria-labelledby="lightbox-search"
-         aria-hidden="true" style="display: none;">
-        <div class="modal-dialog animated" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span class="cs-icon icon-close"></span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">Search something</h4>
-                </div>
-                <div class="modal-body">
-                    <div id="search-info">
-                        <form class="search" action="/search.html" style="position: relative;">
-                            <input type="hidden" name="type" value="product">
-                            <input type="text" name="q" class="search_box" placeholder="Busqueda en la cafetería"
-                                   value="" autocomplete="off">
-                            <span class="search-clear cs-icon icon-close" style="display: none;"></span>
-                            <button class="search-submit" type="submit">
-                                <span class="cs-icon icon-search"></span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<!-- Modal Search-->
+	<div class="modal fade" id="lightbox-search" tabindex="-1" role="dialog" aria-labelledby="lightbox-search" aria-hidden="true" style="display: none;">
+		<div class="modal-dialog animated" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span class="cs-icon icon-close"></span>
+			</button>
+					<h4 class="modal-title" id="myModalLabel">Search something</h4>
+				</div>
+				<div class="modal-body">
+					<div id="search-info">
+						<form class="search" action="./search.html" style="position: relative;">
+							<input type="hidden" name="type" value="product">
+							<input type="text" name="q" class="search_box" placeholder="search our store" value="" autocomplete="off">
+							<span class="search-clear cs-icon icon-close" style="display: none;"></span>
+							<button class="search-submit" type="submit">
+								<span class="cs-icon icon-search"></span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
     <!-- Float right icon -->
     <div class="float-right-icon">

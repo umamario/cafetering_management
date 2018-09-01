@@ -10,13 +10,13 @@
 						<div class="row">
 							<div class="page-heading-inner heading-group">
 								<div class="breadcrumb-group">
-									<h1 class="hidden">Contact</h1>
+									<h1 class="hidden">Ayuda</h1>
 									<div class="breadcrumb clearfix">
-										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="./index.html" title="Fast Food" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a>
+										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="./index" title="Ayuda" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a>
 										</span>
 										<span class="arrow-space"></span>
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-											<a href="./contact.html" title="Contact" itemprop="url"><span itemprop="title">Contact</span></a>
+											<a href="./ayuda" title="Ayuda" itemprop="url"><span itemprop="title">Ayuda</span></a>
 										</span>
 									</div>
 								</div>
@@ -37,14 +37,10 @@
 											<div class="google-maps-wrapper">
 												<div class="page_title">
 													<h2 class="title">
-														<span class="first">Contact</span>
-														<span class="last"> Us</span>
+														<span class="first">Estamos para</span>
+														<span class="last"> Ayudarte</span>
 													</h2>
-													<p class="caption">Nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio. Sed non mauris vitae erat consequat auctor eu in elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris in erat justo. Nullam ac urna eu felis dapibus.</p>
-												</div>
-												<div class="google-maps-inner">
-													<div id="contact_map" class="m_map">
-													</div>
+													<p class="caption">Le responderemos lo antes posible.</p>
 												</div>
 											</div>
 										</div>
@@ -53,31 +49,31 @@
 												<div class="information_content">
 													<div class="information_item col-sm-4">
 														<div class="page_title text_title">
-															<h2 class="title">Hours</h2>
+															<h2 class="title">Horario</h2>
 														</div>
 														<div class="text_content">
 															<ul>
 																<li>
 																	<div class="group_text">
-																		<span class="day">Mon – Thur</span>
+																		<span class="day">Lunes – Martes</span>
 																		<span class="time">6AM - 7PM</span>
 																	</div>
 																</li>
 																<li>
 																	<div class="group_text">
-																		<span class="day">Friday</span>
+																		<span class="day">Viernes</span>
 																		<span class="time">6AM - 9PM</span>
 																	</div>
 																</li>
 																<li>
 																	<div class="group_text">
-																		<span class="day">Saturday</span>
+																		<span class="day">Sábado</span>
 																		<span class="time">6AM - 9PM</span>
 																	</div>
 																</li>
 																<li>
 																	<div class="group_text">
-																		<span class="day">Sunday</span>
+																		<span class="day">Domingo</span>
 																		<span class="time">7AM - 7PM</span>
 																	</div>
 																</li>
@@ -86,26 +82,26 @@
 													</div>
 													<div class="information_item col-sm-4">
 														<div class="page_title text_title">
-															<h2 class="title">Contact info</h2>
+															<h2 class="title">Información de contacto</h2>
 														</div>
 														<div class="text_content">
 															<div class="group_contact_info">
 																<div class="item">
 																	<span>
-																		<i class="fa fa-home"></i><address>123 Mission St. San Francisco</address>
+																		<i class="fa fa-home"></i><address>C/ Ollerías 33, Málaga, España</address>
 																	</span>
 																</div>
 																<div class="item phone-fax">
 																	<span>
-																		<i class="fa fa-phone"></i><a href="tel:(084)0123456789">(084) 0123 456 789</a>
+																		<i class="fa fa-phone"></i><a href="tel:(034)666777888">666 777 888</a>
 																	</span>
-																	<span>
-																		<i class="fa fa-fax"></i><a href="fax:(084)0123456789">(084) 0123 456 789</a>
-																	</span>
+{#																	<span>#}
+{#																		<i class="fa fa-fax"></i><a href="fax:(084)0123456789">(084) 0123 456 789</a>#}
+{#																	</span>#}
 																</div>
 																<div class="item">
 																	<span>
-																		<i class="fa fa-envelope-o"></i><a href="mailto:info@adart.vn">info@adart.vn</a>
+																		<i class="fa fa-envelope-o"></i><a href="mailto:info@cafetering.es">info@cafetering.es</a>
 																	</span>
 																</div>
 															</div>
@@ -113,14 +109,15 @@
 													</div>
 													<div class="information_item col-sm-4">
 														<div class="page_title form_title">
-															<h2 class="title">Write us a message</h2>
+															<h2 class="title">Escribenos</h2>
 														</div>
 														<div class="form_content">
-															<form method="post" action="./contact.html" id="contact_form" class="contact-form" accept-charset="UTF-8">
+                                                            {% if not enviado %}
+															    <form method="post" id="contact_form" class="contact-form" accept-charset="UTF-8"> {% csrf_token %}
 																<div id="contactFormWrapper" class="group_form">
 																	<div class="col-md-6">
 																		<div class="form-item">
-																			<input type="text" id="contactFormName" name="contact[name]" placeholder="Username">
+																			<input type="text" id="contactFormName" name="contact[name]" placeholder="Asunto">
 																		</div>
 																	</div>
 																	<div class="col-md-6">
@@ -130,7 +127,7 @@
 																	</div>
 																	<div class="col-md-12">
 																		<div class="form-item">
-																			<textarea rows="15" cols="75" id="contactFormMessage" name="contact[body]" placeholder="Your message"></textarea>
+																			<textarea rows="15" cols="75" id="contactFormMessage" name="contact[body]" placeholder="Escribe su mensaje"></textarea>
 																		</div>
 																	</div>
 																	<div class="col-md-12">
@@ -140,7 +137,10 @@
 																	</div>
 																</div>
 															</form>
-														</div>
+														    {% else %}
+                                                                <h4>Muchas gracias por su email</h4>
+                                                            {% endif %}
+                                                        </div>
 													</div>
 												</div>
 											</div>

@@ -10,16 +10,16 @@
                         <div class="row">
                             <div class="page-heading-inner heading-group">
                                 <div class="breadcrumb-group">
-                                    <h1 class="hidden">Editar oferta #{{ oferta.id }}</h1>
+                                    <h1 class="hidden">Ver Producto</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
-                                                href="./index" title="Fast Food" itemprop="url"><span
+                                                href="./index" title="Ver Producto" itemprop="url"><span
                                                 itemprop="title"><i class="fa fa-home"></i></span></a>
 										</span>
                                         <span class="arrow-space"></span>
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-											<a title="Editar oferta #{{ oferta.id }}" itemprop="url"><span
-                                                    itemprop="title">Editar oferta #{{ oferta.id }}</span></a>
+											<a title="Ver Producto" itemprop="url"><span
+                                                    itemprop="title">Ver Producto</span></a>
 										</span>
                                     </div>
                                 </div>
@@ -29,23 +29,26 @@
                 </div>
             </section>
             <section class="order-layout">
+
+                <button class="btn btn-default" onclick="location.href='/editar-producto/{{producto.id}}'"
+                            style="margin:auto; display:block;">Editar Producto
+                </button>
                 <div class="order-wrapper">
                     <form method="post" id="main_form" enctype="multipart/form-data">{% csrf_token %}
                         <div class="container">
                             <div class="row">
                                 <div class="order-inner">
                                     <div class="order-content">
+
                                         <div class="order-address">
                                             <div id="order_payment" class="col-md-6 address-items">
                                                 <h2 class="address-title">Imagen</h2>
                                                 <div class="address-content">
-                                                {% if oferta.imagen %}
-                                                    <img src="{{ oferta.imagen.url }}">
-                                                {% else %}
-                                                    <label>Ninguna imagen asociada</label>
-                                                {% endif %}
-                                                    <br><br>
-                                                    <p id="upload"><input type="file" name="upload_field_classic"></p>
+                                                    {% if producto.imagen %}
+                                                        <img src="{{ producto.imagen.url }}">
+                                                    {% else %}
+                                                        <label>Ninguna imagen asociada</label>
+                                                    {% endif %}
                                                 </div>
                                             </div>
 
@@ -56,8 +59,9 @@
                                                         <span class="title">Estado</span>
 
                                                         <span class="content">
-                                                              <select name="estado" class="form-control" id="estado_id">
-                                                                  {% if oferta.estado == 1 %}
+                                                              <select name="estado" class="form-control" id="estado_id"
+                                                                      disabled="disabled">
+                                                                  {% if producto.estado == 1 %}
                                                                       <option selected>Activado</option>
                                                                       <option>Desactivado</option>
                                                                   {% else %}
@@ -68,103 +72,99 @@
                                                         </span>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label><h4 align="center">Título</h4></label>
-                                                        <input type="text" name="titulo" class="form-control"
-                                                               id="exampleInputPassword1" value="{{ oferta.titulo }}"
-                                                               style="height: 32px"
-                                                               placeholder="Escriba el titulo" maxlength="30">
+                                                        <label><h4 align="center">Nombre</h4></label>
+                                                        <input type="text" name="nombre" class="form-control"
+                                                               id="exampleInputPassword1" style="height: 32px"
+                                                               value="{{ producto.nombre }}"
+                                                               disabled="disabled"
+                                                               placeholder="Escriba el Nombre" maxlength="30">
                                                         <label><h4 align="center">Descripción</h4></label>
                                                         <textarea class="form-control" id="exampleFormControlTextarea1"
                                                                   name="descripcion"
                                                                   placeholder="Escriba la descripción" rows="3"
-                                                                  maxlength="200">{{ oferta.descripcion }}</textarea>
-                                                        <br>
-                                                        <div class="trio">
-                                                            <input id="trio1" type="text" name="valido_hasta"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" value="{{ oferta.valido_hasta |date:"d/m/Y" }}"
-                                                                   class="datepicker" placeholder="Valido hasta">
-                                                            <input id="trio2" type="number" name="descuento"
-                                                                   style="padding: 5px 0px; text-align: right; width: 119px; background-color:white"
-                                                                   placeholder="Descuento"
-                                                                    {% if oferta.descuento_porcentual %}
-                                                                        value="{{ oferta.descuento_porcentual }}">
-                                                                    {% else %}
-                                                                        value="{{ oferta.descuento_numerico }}">
-                                                                    {% endif %}
-                                                            <select id="trio3" name="tipo_descuento"
-                                                                    style="padding-top: 7px; padding-bottom: 7px; padding-left: 4px; background-color: white"
-                                                                    name="tipo_descuento">
-                                                                {% if oferta.descuento_porcentual %}
-                                                                    <option selected>%</option>
-                                                                    <option>€</option>
-                                                                {% else %}
-                                                                    <option>%</option>
-                                                                    <option selected>€</option>
-                                                                {% endif %}
-                                                            </select>
-                                                        </div>
-                                                        <br>
+                                                                  disabled="disabled"
+                                                                  maxlength="200">{{ producto.descripcion }}</textarea>
+                                                    <br>
+                                                        <label>Grasas &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Calorias &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Precio</label>
+                                                    <div class="trio">
+                                                        <input id="trio1" type="text" name="grasas"
+                                                               style="padding: 5px 0px; text-align: center; width: 85px; background-color:white"
+                                                               value="{{ producto.grasas_saturadas }}"
+                                                               disabled="disabled"
+                                                               placeholder="Grasas">&nbsp;&nbsp;&nbsp;
+                                                        <input id="trio2" type="text" name="calorias"
+                                                               style="padding: 5px 0px; text-align: center; width: 85px; background-color:white"
+                                                               value="{{ producto.calorias }}"
+                                                               disabled="disabled"
+                                                               placeholder="Calorias">&nbsp;&nbsp;&nbsp;
+                                                        <input type="text" name="precio_producto"
+                                                               style="padding: 5px 0px; text-align: center; width: 85px; background-color:white"
+                                                               value="{{ producto.precio }}"
+                                                               disabled="disabled"
+                                                               onkeypress="return onlyNumbers(event)"
+                                                               placeholder="Precio">€
+                                                    </div>
+                                                    <br>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="order-info">
-                                            <div class="order-info-inner">
-                                                <table id="order_details">
+
+                                        <div class="order-address">
+
+                                            <div id="order_payment" class="col-md-6 order-info">
+                                                <table id="alergeno_table">
                                                     <thead>
-                                                    <tr>
-                                                        <th style="text-align: center">Producto ID</th>
-                                                        <th style="text-align: center">Nombre</th>
-                                                        <th style="text-align: center">Precio</th>
-                                                        <th style="text-align: center">Precio Oferta</th>
-                                                        <th style="text-align: center">Acciones</th>
-                                                    </tr>
+                                                    <th>Alergeno</th>
+                                                    <th></th>
                                                     </thead>
                                                     <tbody>
-                                                    {% for producto in productos %}
-                                                        <tr id="fila-" class="odd">
-                                                            <td class="td-product">
-                                                                #{{ producto.id }}
-                                                            </td>
-                                                            <td class="td-product">
-                                                                {{ producto.nombre }}
-                                                            </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio }}€
-                                                            </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio_oferta }}€
-                                                            </td>
+                                                    {% for alergeno in alergenos %}
+                                                        <tr>
                                                             <td>
-                                                                <button type="button" name="trash-row-1"
-                                                                        onclick="deleteThisRowWithDatabase({{ forloop.counter }}, 'oferta', {{ oferta.id}})" class="btn btn-default">
-                                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                                </button>
+                                                                <input type="text" value="{{ alergeno.nombre }}"
+                                                                       style="padding: 0px 0px;" autocomplete="off"
+                                                                       placeholder="Escriba el nombre">
                                                             </td>
+                                                            <td></td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                    </tbody>
+                                                    <tfoot>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+
+                                            <div id="order_payment" class="col-md-6 order-info">
+                                                <table id="etiquetas_table">
+                                                    <thead>
+                                                    <th>Etiquetas</th>
+                                                    <th></th>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for etiqueta in etiquetas %}
+                                                        <tr>
+                                                            <td><input type="text" value="{{ etiqueta.nombre }}"
+                                                                       style="padding: 0px 0px;" autocomplete="off"
+                                                                       placeholder="Escriba el nombre">
+                                                            </td>
+                                                            <td></td>
                                                         </tr>
                                                     {% endfor %}
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr class="order_summary order_total">
-                                                        <td class="td-label" colspan="4"></td>
-                                                        <td class="total"><span class="money" align="center"
-                                                                                data-currency="EUR">
-                                                            <button type="button" onclick="addNewRow()"
-                                                                    class="btn btn-default">
-                                                                <span class="glyphicon glyphicon-plus-sign"></span>
-                                                            </button>
-                                                        </span></td>
-                                                    </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
+
                                         </div>
-                                        <br><br>
-                                        <button class="btn btn-default" type="submit"
-                                                style="margin:auto; display:block;">Guardar
-                                        </button>
-                                        <br><br>
+
                                     </div>
+                                    <br><br>
+                                    <button class="btn btn-default" onclick="location.href='/eliminar-producto/{{producto.id}}'"
+                                            style="margin:auto; display:block;">Eliminar Producto
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -172,6 +172,42 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Historico de estados</h2>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Usuario</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for statelog in statelogs %}
+                        <tr>
+                            <th scope="row">{{ statelog.timestamp }}</th>
+                            <td>{{ statelog.state }}</td>
+                            <td>@{{ statelog.by.username }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+
     </div>
 
 
@@ -219,7 +255,7 @@
 
                 // Submit Form and upload file
                 $.ajax({
-                    url: "/nueva-oferta/",
+                    url: "/nuevo-producto/",
                     data: fd,// the formData function is available in almost all new browsers.
                     type: "POST",
                     contentType: false,
@@ -232,7 +268,7 @@
                     success: function (data) {
                     },
                     complete: function () {
-                        url = "/ofertas";
+                        url = "/productos";
                         $(location).attr("href", url);
                     }
                 });
@@ -263,6 +299,40 @@
                 dataType: 'json',
                 success: function (data) {
                     $("#id_nombre_producto-" + index).autocomplete({
+                        source: data.list,
+                        minLength: 1
+                    });
+                }
+            });
+        };
+
+        $.fn.AutocompleteAlergeno = function (index) {
+            var value = $(this).val();
+            $.ajax({
+                url: "/ajax/autocomplete_nombre_alergeno",
+                data: {
+                    'search': value
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $("#id_nombre_alergeno-" + index).autocomplete({
+                        source: data.list,
+                        minLength: 1
+                    });
+                }
+            });
+        };
+
+        $.fn.AutocompleteEtiqueta = function (index) {
+            var value = $(this).val();
+            $.ajax({
+                url: "/ajax/autocomplete_nombre_etiqueta",
+                data: {
+                    'search': value
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $("#id_nombre_etiquetas-" + index).autocomplete({
                         source: data.list,
                         minLength: 1
                     });
