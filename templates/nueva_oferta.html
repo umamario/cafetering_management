@@ -93,8 +93,9 @@
                                                             <input id="trio1" type="text" name="valido_hasta"
                                                                    style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
                                                                    class="datepicker" placeholder="Valido hasta">
-                                                            <input id="trio2" type="number" name="descuento"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" required
+                                                            <input id="trio2" type="text" name="descuento"
+                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
+                                                                   required onkeypress="return onlyNumbers(event)"
                                                                    placeholder="Descuento">
                                                             <select id="trio3" name="tipo_descuento"
                                                                     style="padding-top: 7px; padding-bottom: 7px; padding-left: 4px; background-color: white"

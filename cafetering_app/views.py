@@ -255,9 +255,9 @@ def nuevo_producto_view(request):
     else:
         nombre = request.POST.get('nombre', '')
         descripcion = request.POST.get('descripcion', '')
-        grasas = request.POST.get('grasas', '0')
-        calorias = request.POST.get('calorias', '0')
-        precio = request.POST.get('precio_producto', '0')
+        grasas = request.POST.get('grasas', '0').replace(",", ".")
+        calorias = request.POST.get('calorias', '0').replace(",", ".")
+        precio = request.POST.get('precio_producto', '0').replace(",", ".")
         estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
         producto = Producto.objects.create(nombre=nombre, descripcion=descripcion,
                                            estado=estado, grasas_saturadas=grasas,
@@ -893,6 +893,7 @@ def informes_view(request):
             plt.subplots_adjust(bottom=0.15)
             plt.title('Pedidos por estado')
             plt.savefig('cafetering_app/media/graficos/pedidosestado.jpg')
+            plt.close()
 
             estado_pedido_ord = []
             data = []
@@ -901,7 +902,11 @@ def informes_view(request):
                 select={'day': "date( fecha_creacion )"}).values('day').annotate(Count('id'))
 
             for stat in stats:
-                estado_pedido_ord.append(datetime.strptime(stat['day'], '%Y-%m-%d').strftime('%d/%m/%y'))
+                if stat['day'].__class__.__name__ == 'unicode':
+                    estado_pedido_ord.append(datetime.strptime(stat['day'], '%Y-%m-%d').strftime('%d/%m/%y'))
+                else:
+                    estado_pedido_ord.append(stat['day'].strftime('%d/%m/%y'))
+
                 data.append(stat['id__count'])
 
             np.random.seed(42)
@@ -915,6 +920,7 @@ def informes_view(request):
             plt.subplots_adjust(bottom=0.15)
             plt.title('Pedidos por fecha')
             plt.savefig('cafetering_app/media/graficos/pedidosporfecha.jpg')
+            plt.close()
         else:
             pass
         return render(request, 'informes.html',

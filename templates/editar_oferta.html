@@ -39,11 +39,11 @@
                                             <div id="order_payment" class="col-md-6 address-items">
                                                 <h2 class="address-title">Imagen</h2>
                                                 <div class="address-content">
-                                                {% if oferta.imagen %}
-                                                    <img src="{{ oferta.imagen.url }}">
-                                                {% else %}
-                                                    <label>Ninguna imagen asociada</label>
-                                                {% endif %}
+                                                    {% if oferta.imagen %}
+                                                        <img src="{{ oferta.imagen.url }}">
+                                                    {% else %}
+                                                        <label>Ninguna imagen asociada</label>
+                                                    {% endif %}
                                                     <br><br>
                                                     <p id="upload"><input type="file" name="upload_field_classic"></p>
                                                 </div>
@@ -81,13 +81,15 @@
                                                         <br>
                                                         <div class="trio">
                                                             <input id="trio1" type="text" name="valido_hasta"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" value="{{ oferta.valido_hasta |date:"d/m/Y" }}"
+                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
+                                                                   value="{{ oferta.valido_hasta |date:"d/m/Y" }}"
                                                                    class="datepicker" placeholder="Valido hasta">
-                                                            <input id="trio2" type="number" name="descuento"
+                                                            <input id="trio2" type="text" name="descuento"
                                                                    style="padding: 5px 0px; text-align: right; width: 119px; background-color:white"
+                                                                   onkeypress="return onlyNumbers(event)"
                                                                    placeholder="Descuento"
                                                                     {% if oferta.descuento_porcentual %}
-                                                                        value="{{ oferta.descuento_porcentual }}">
+                                                                   value="{{ oferta.descuento_porcentual }}">
                                                                     {% else %}
                                                                         value="{{ oferta.descuento_numerico }}">
                                                                     {% endif %}
@@ -137,7 +139,8 @@
                                                             </td>
                                                             <td>
                                                                 <button type="button" name="trash-row-1"
-                                                                        onclick="deleteThisRowWithDatabase({{ forloop.counter }}, 'oferta', {{ oferta.id}})" class="btn btn-default">
+                                                                        onclick="deleteThisRowWithDatabase({{ forloop.counter }}, 'oferta', {{ oferta.id }})"
+                                                                        class="btn btn-default">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </button>
                                                             </td>

@@ -10,3 +10,7 @@ psycopg2==2.7.5
 django-bootstrap-toolkit==2.15.0
 Pillow==5.2.0
 psycopg2-binary==2.7.5
+matplotlib==2.2.3
+# apt-get install python-tk
+# export DISPLAY=:10
+# Xvfb :10 -ac &
