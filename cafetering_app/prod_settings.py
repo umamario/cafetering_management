@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -24,7 +23,6 @@ SECRET_KEY = '7-pr9@wu)2nro!5gvbp9hy8z7(*2lln#ebm_114bl1#6i3tlaj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 
 ALLOWED_HOSTS = []
 
@@ -41,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_extensions',
     'bos',
+    'django_fsm',
+    'django_fsm_log',
+    'bootstrap_toolkit',
     'cafetering_app'
 ]
 
@@ -76,21 +77,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cafetering_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cafetering_db_tfg',  # Or path to database file if using sqlite3.
-        'USER': 'cafetering_user_tfg;',
-        'PASSWORD': 'cafetering_db_tfg',
-        'HOST': '80.211.68.238',
-        'PORT': '5432',  # Set to empty string for default.
+        'NAME': 'cafetering_db',
+        'USER': 'cafetering_user',
+        'PASSWORD': 'po0231532',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -110,11 +109,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
+
+DATE_FORMAT = "d-m-Y"
 
 TIME_ZONE = 'Europe/Madrid'
 
@@ -124,10 +124,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_URL = '/static/'
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+MEDIA_URL = '/media/'
+
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'testsite_app'
+# EMAIL_HOST_PASSWORD = 'mys3cr3tp4ssw0rd'
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'TestSite Team <noreply@example.com>'
