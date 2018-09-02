@@ -827,7 +827,7 @@ def informes_view(request):
 
                 plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
                 plt.axis('equal')
-                plt.title('Menus pedidos')
+                plt.title('Menus vendidos')
                 plt.savefig('cafetering_app/media/graficos/menupedido.jpg')
                 plt.close()
 
@@ -840,7 +840,7 @@ def informes_view(request):
 
                 plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
                 plt.axis('equal')
-                plt.title('Ofertas pedidas')
+                plt.title('Ofertas vendidas')
                 plt.savefig('cafetering_app/media/graficos/ofertapedido.jpg')
                 plt.close()
 
@@ -853,7 +853,7 @@ def informes_view(request):
 
                 plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
                 plt.axis('equal')
-                plt.title('Productos pedidos')
+                plt.title('Productos vendidos')
                 plt.savefig('cafetering_app/media/graficos/productopedido.jpg')
                 plt.close()
 
@@ -865,7 +865,7 @@ def informes_view(request):
                     sizes.append(cp['quantity__sum'])
                 plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
                 plt.axis('equal')
-                plt.title('Categorias de producto pedidas')
+                plt.title('Ventas por categorias')
                 plt.savefig('cafetering_app/media/graficos/categoriapedido.jpg')
                 plt.close()
         elif request.POST.get('recurso', '') == u'orders':
@@ -990,7 +990,6 @@ def login_view(request):
 @login_required
 def reset_password_view(request):
     return redirect(index)
-
 
 # @login_required
 # def register_view(request):

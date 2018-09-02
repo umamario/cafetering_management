@@ -51,7 +51,8 @@ urlpatterns = [
     url(r'^eliminar-oferta/(?P<oferta_pk>[0-9]+)/$', views.eliminar_oferta_view, name='eliminar_oferta_view'),
     url(r'^eliminar-menu/(?P<menu_pk>[0-9]+)/$', views.eliminar_menu_view, name='eliminar_menu_view'),
     url(r'^eliminar-producto/(?P<producto_pk>[0-9]+)/$', views.eliminar_producto_view, name='eliminar_producto_view'),
-    url(r'^eliminar-categoria/(?P<categoria_pk>[0-9]+)/$', views.eliminar_categoria_view, name='eliminar_categoria_view'),
+    url(r'^eliminar-categoria/(?P<categoria_pk>[0-9]+)/$', views.eliminar_categoria_view,
+        name='eliminar_categoria_view'),
 
     url(r'^ofertas$', views.ofertas_view, name='ofertas_view'),
     url(r'^menus$', views.menus_view, name='menus_view'),
@@ -65,7 +66,8 @@ urlpatterns = [
     # url(r'^test$', views.test_view, name='test_view'),
 
     url(r'^ajax/autocomplete_id_producto/$', views.autocomplete_id_producto, name='autocomplete_id_producto'),
-    url(r'^ajax/autocomplete_nombre_producto/$', views.autocomplete_nombre_producto, name='autocomplete_nombre_producto'),
+    url(r'^ajax/autocomplete_nombre_producto/$', views.autocomplete_nombre_producto,
+        name='autocomplete_nombre_producto'),
     url(r'^ajax/autocomplete_oferta/$', views.autocomplete_oferta_view, name='autocomplete_oferta_view'),
     url(r'^ajax/autocomplete_menu/$', views.autocomplete_menu_view, name='autocomplete_menu_view'),
     url(r'^ajax/autocomplete_nombre_alergeno/$', views.autocomplete_alergeno_view, name='autocomplete_alergeno_view'),
