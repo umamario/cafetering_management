@@ -1,7 +1,7 @@
 Cafetering para Cafeterias
 ==========
 
-This is code of the web APP used in the project Cafeteing.
+Cafetering is a management system made for university cafeterias developed as a bachelor thesis. 
 
 Installation
 --------------------
