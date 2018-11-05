@@ -3,10 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from bos.models import *
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django_fsm_log.models import StateLog
-from django.db.models import Q
 
 
 def logout_view(request):
@@ -64,19 +62,6 @@ def pedidos_view(request):
                     col += 1
 
             workbook.close()
-            # import pandas as pd
-            # df = pd.DataFrame(columns=('Pedido ID', 'Estado', 'Recogida estimada', 'Recogido', 'Importe'))
-            # ipdb.set_trace()
-            # for pedido in pedidos:
-            #     row_dict = {'Pedido ID': "#%d" % pedido.id, 'Estado': pedido.get_estado_display(),
-            #                'Recogida estimada': pedido.recogida_estimada if pedido.recogida_estimada else '---',
-            #                'Recogido': pedido.fecha_recogida if pedido.fecha_recogida else '---',
-            #                'Importe': pedido.importe}
-            #     serie = pd.Series(row_dict)
-            #     df.append(serie, ignore_index=True)
-
-            # df.to_excel()
-
             f = open('cafetering_app/media/reports/reporte.xlsx', 'r')
             pdf_contents = f.read()
             f.close()
@@ -140,7 +125,9 @@ def eliminar_producto_view(request, producto_pk):
 @login_required
 def eliminar_pedido_view(request, pedido_pk):
     obj = get_object_or_404(Pedido, pk=pedido_pk)
-    obj.delete()
+    obj.cancelar(by=request.user)
+    obj.observaciones = request.POST.get("descripcion", "")
+    obj.save()
     return redirect(pedidos_view)
 
 
@@ -161,14 +148,14 @@ def eliminar_oferta_view(request, oferta_pk):
 @login_required
 def oferta_view(request, oferta_pk):
     oferta = get_object_or_404(Oferta, pk=oferta_pk)
-    productos = oferta.productos.all()
+    productos = oferta.ofertaproducto_set.all()
     return render(request, "ver-oferta.html", {'oferta': oferta, 'productos': productos})
 
 
 @login_required
 def menu_view(request, menu_pk):
     menu = get_object_or_404(Menu, pk=menu_pk)
-    productos = menu.productos.all()
+    productos = menu.menuproducto_set.all()
     return render(request, "ver-menu.html", {'menu': menu, 'productos': productos})
 
 
@@ -188,8 +175,15 @@ def nueva_oferta_view(request):
         estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
         oferta = Oferta.objects.create(titulo=titulo, descripcion=descripcion,
                                        estado=estado, valido_hasta=valido_hasta)
-        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
-        productos = Producto.objects.filter(nombre__in=product_names)
+        product_names = [(key.split("nombre_producto-")[1], value) for key, value in request.POST.dict().iteritems()
+                         if key.startswith("nombre_producto-")]
+        for row, name in product_names:
+            producto = Producto.objects.filter(nombre=name)
+            if producto.exists() and producto.count() == 1:
+                OfertaProducto.objects.create(producto=producto[0],
+                                              oferta=oferta,
+                                              quantity=int(request.POST.get('cantidad_producto-%s' % row, '0')))
+
         if request.is_ajax():
             img = request.FILES.get('image')
         else:
@@ -202,46 +196,7 @@ def nueva_oferta_view(request):
         else:
             oferta.descuento_numerico = descuento
 
-        if productos.exists():
-            oferta.productos.add(*list(productos))
-
-        oferta.save()
-
-        return redirect(ofertas_view)
-
-
-@login_required
-def nuevo_pedido_view(request):
-    if request.method == 'GET':
-        return render(request, 'nuevo_pedido.html')
-    else:
-        titulo = request.POST.get('titulo', '')
-        descripcion = request.POST.get('descripcion', '')
-        valido_hasta_str = request.POST.get('valido_hasta', '')
-        valido_hasta = None
-        if valido_hasta_str:
-            valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
-        descuento = request.POST.get('descuento', '')
-        isPorcentage = True if request.POST.get('tipo_descuento', '') == u'%' else False
-        estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
-        oferta = Oferta.objects.create(titulo=titulo, descripcion=descripcion,
-                                       estado=estado, valido_hasta=valido_hasta)
-        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
-        productos = Producto.objects.filter(nombre__in=product_names)
-        if request.is_ajax():
-            img = request.FILES.get('image')
-        else:
-            img = request.FILES.get('upload_field_classic')
-        if img:
-            oferta.imagen.save(u'oferta-%d.%s' % (oferta.id, img.content_type.split('/')[1]), img)
-
-        if isPorcentage:
-            oferta.descuento_porcentual = descuento
-        else:
-            oferta.descuento_numerico = descuento
-
-        if productos.exists():
-            oferta.productos.add(*list(productos))
+        oferta.cafeteria = Empleado.objects.get(user=request.user).cafeteria
 
         oferta.save()
 
@@ -266,8 +221,22 @@ def nuevo_producto_view(request):
                             key.startswith("nombre_alergeno-")]
         nombre_etiquetas = [value for key, value in request.POST.dict().iteritems() if
                             key.startswith("nombre_etiquetas-")]
-        alergenos = Alergeno.objects.filter(nombre__in=nombre_alergenos)
-        etiquetas = Etiqueta.objects.filter(nombre__in=nombre_etiquetas)
+
+        alergenos = []
+        for algr in nombre_alergenos:
+            alergenos.append(Alergeno.objects.get_or_create(nombre=algr)[0])
+
+        etiquetas = []
+        for etq in nombre_etiquetas:
+            etiquetas.append(Etiqueta.objects.get_or_create(nombre=etq)[0])
+
+        if len(alergenos) > 0:
+            producto.alergenos.clear()
+            producto.alergenos.add(*alergenos)
+
+        if len(etiquetas) > 0:
+            producto.etiquetas.clear()
+            producto.etiquetas.add(*etiquetas)
 
         if request.is_ajax():
             img = request.FILES.get('image')
@@ -277,11 +246,7 @@ def nuevo_producto_view(request):
         if img:
             producto.imagen.save(u'producto-%d.%s' % (producto.id, img.content_type.split('/')[1]), img)
 
-        if alergenos.exists():
-            producto.alergenos.add(*list(alergenos))
-
-        if etiquetas.exists():
-            producto.etiquetas.add(*list(etiquetas))
+        producto.cafeteria = Empleado.objects.get(user=request.user).cafeteria
 
         producto.save()
 
@@ -296,14 +261,21 @@ def nuevo_menu_view(request):
         nombre = request.POST.get('nombre', '')
         descripcion = request.POST.get('descripcion', '')
         valido_hasta_str = request.POST.get('valido_hasta', '')
+        valido_hasta = None
         if valido_hasta_str:
             valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
-        precio = request.POST.get('precio', '')
+        precio = request.POST.get('precio', '').replace(",", ".")
         estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
         menu = Menu.objects.create(nombre=nombre, descripcion=descripcion,
                                    estado=estado, precio=precio, valido_hasta=valido_hasta)
-        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
-        productos = Producto.objects.filter(nombre__in=product_names)
+        product_names = [(key.split("nombre_producto-")[1], value) for key, value in request.POST.dict().iteritems()
+                         if key.startswith("nombre_producto-")]
+        for row, name in product_names:
+            producto = Producto.objects.filter(nombre=name)
+            if producto.exists() and producto.count() == 1:
+                MenuProducto.objects.create(producto=producto[0],
+                                            menu=menu,
+                                            quantity=int(request.POST.get('cantidad_producto-%s' % row, '0')))
         if request.is_ajax():
             img = request.FILES.get('image')
         else:
@@ -311,9 +283,7 @@ def nuevo_menu_view(request):
         if img:
             menu.imagen.save(u'menu-%d.%s' % (menu.id, img.content_type.split('/')[1]), img)
 
-        if productos.exists():
-            menu.productos.add(*list(productos))
-
+        menu.cafeteria = Empleado.objects.get(user=request.user).cafeteria
         menu.save()
 
         return redirect(menus_view)
@@ -327,7 +297,8 @@ def nueva_categoria_view(request):
         titulo = request.POST.get('titulo', '')
         descripcion = request.POST.get('descripcion', '')
         estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
-        categoria = Categoria.objects.create(nombre=titulo, descripcion=descripcion, estado=estado)
+        cafeteria = Empleado.objects.get(user=request.user).cafeteria
+        categoria = Categoria.objects.create(nombre=titulo, descripcion=descripcion, estado=estado, cafeteria=cafeteria)
         product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
         productos = Producto.objects.filter(nombre__in=product_names)
 
@@ -383,14 +354,14 @@ def remove_product_from_list(request):
         object_pk = request.GET.get('object_pk', '')
         if object_name == 'categoria':
             obj = Categoria.objects.get(pk=object_pk)
+            obj.productos.remove(producto)
         elif object_name == 'oferta':
-            obj = Oferta.objects.get(pk=object_pk)
+            OfertaProducto.objects.get(oferta__id=object_pk, producto=producto).delete()
         elif object_name == 'menu':
             obj = Menu.objects.get(pk=object_pk)
         elif object_name == 'pedido':
             obj = Pedido.objects.get(pk=object_pk)
-
-        obj.productos.remove(producto)
+            obj.productos.remove(producto)
 
         data = {}
         return JsonResponse(data)
@@ -502,8 +473,10 @@ def editar_producto_view(request, producto_pk):
     else:
         producto.nombre = request.POST.get('nombre', '')
         producto.descripcion = request.POST.get('descripcion', '')
-        producto.grasas_saturadas = request.POST.get('grasas', '0').replace(",", ".")
-        producto.calorias = request.POST.get('calorias', '0').replace(",", ".")
+        producto.grasas_saturadas = request.POST.get('grasas', '0').replace(",", ".") \
+            if not request.POST.get('grasas', '0') == u'None' else None
+        producto.calorias = request.POST.get('calorias', '0').replace(",", ".") \
+            if not request.POST.get('calorias', '0') == u'None' else None
         producto.precio = request.POST.get('precio_producto', '0').replace(",", ".")
         producto.estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
 
@@ -512,21 +485,26 @@ def editar_producto_view(request, producto_pk):
         nombre_etiquetas = [value for key, value in request.POST.dict().iteritems() if
                             key.startswith("nombre_etiquetas-")]
 
-        alergenos = Alergeno.objects.filter(nombre__in=nombre_alergenos)
-        etiquetas = Etiqueta.objects.filter(nombre__in=nombre_etiquetas)
+        alergenos = []
+        for algr in nombre_alergenos:
+            alergenos.append(Alergeno.objects.get_or_create(nombre=algr)[0])
+
+        etiquetas = []
+        for etq in nombre_etiquetas:
+            etiquetas.append(Etiqueta.objects.get_or_create(nombre=etq)[0])
+
+        if len(alergenos) > 0:
+            producto.alergenos.clear()
+            producto.alergenos.add(*alergenos)
+
+        if len(etiquetas) > 0:
+            producto.etiquetas.clear()
+            producto.etiquetas.add(*etiquetas)
 
         img = request.FILES.get('upload_field_classic', '')
 
         if img:
             producto.imagen.save(u'producto-%d.%s' % (producto.id, img.content_type.split('/')[1]), img)
-
-        if alergenos.exists():
-            producto.alergenos.clear()
-            producto.alergenos.add(*list(alergenos))
-
-        if etiquetas.exists():
-            producto.etiquetas.clear()
-            producto.etiquetas.add(*list(etiquetas))
 
         producto.save()
 
@@ -537,7 +515,7 @@ def editar_producto_view(request, producto_pk):
 def editar_oferta_view(request, oferta_pk):
     if request.method == 'GET':
         oferta = get_object_or_404(Oferta, pk=oferta_pk)
-        productos = oferta.productos.all()
+        productos = oferta.ofertaproducto_set.all()
         return render(request, "editar_oferta.html", {'oferta': oferta, 'productos': productos})
     else:
         titulo = request.POST.get('titulo', '')
@@ -546,7 +524,7 @@ def editar_oferta_view(request, oferta_pk):
         valido_hasta = None
         if valido_hasta_str:
             valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
-        descuento = request.POST.get('descuento', '')
+        descuento = request.POST.get('descuento', '').replace(',', '.')
         isPorcentage = True if request.POST.get('tipo_descuento', '') == u'%' else False
         estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
         oferta = Oferta.objects.get(pk=oferta_pk)
@@ -555,8 +533,15 @@ def editar_oferta_view(request, oferta_pk):
         oferta.estado = estado
         oferta.valido_hasta = valido_hasta
 
-        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
-        productos = Producto.objects.filter(nombre__in=product_names)
+        product_names = [(key.split("nombre_producto-")[1], value) for key, value in request.POST.dict().iteritems()
+                         if key.startswith("nombre_producto-")]
+        for row, name in product_names:
+            producto = Producto.objects.filter(nombre=name)
+            if producto.exists() and producto.count() == 1:
+                OfertaProducto.objects.update_or_create(producto=producto[0],
+                                                        oferta=oferta,
+                                                        quantity=int(
+                                                            request.POST.get('cantidad_producto-%s' % row, '0')))
 
         if request.FILES.get('upload_field_classic', ''):
             img = request.FILES.get('upload_field_classic')
@@ -566,9 +551,6 @@ def editar_oferta_view(request, oferta_pk):
             oferta.descuento_porcentual = descuento
         else:
             oferta.descuento_numerico = descuento
-
-        if productos.exists():
-            oferta.productos.add(*list(productos))
 
         oferta.save()
 
@@ -586,10 +568,8 @@ def editar_pedido_view(request, pedido_pk):
     if request.method == 'GET':
         estados = list(STATES_STR)
         alumnos = pedido.ordenante.all()
-        statelogs = StateLog.objects.for_(pedido)
         return render(request, 'editar_pedido.html', {'pedido': pedido, 'alumnos': alumnos, 'ofertas': ofertas,
-                                                      'menus': menus, 'productos': productos, 'statelogs': statelogs,
-                                                      'estados': estados})
+                                                      'menus': menus, 'productos': productos, 'estados': estados})
     else:
         estado = request.POST.get('estado', '')
 
@@ -681,12 +661,13 @@ def editar_pedido_view(request, pedido_pk):
 def editar_menu_view(request, menu_pk):
     if request.method == 'GET':
         menu = get_object_or_404(Menu, pk=menu_pk)
-        productos = menu.productos.all()
+        productos = menu.menuproducto_set.all()
         return render(request, 'editar_menu.html', {'menu': menu, 'productos': productos})
     else:
         nombre = request.POST.get('nombre', '')
         descripcion = request.POST.get('descripcion', '')
         valido_hasta_str = request.POST.get('valido_hasta', '')
+        valido_hasta = None
         if valido_hasta_str:
             valido_hasta = datetime.datetime.strptime(valido_hasta_str, '%d/%m/%Y').date()
         precio = request.POST.get('precio', '').replace(',', '.')
@@ -699,14 +680,18 @@ def editar_menu_view(request, menu_pk):
         menu.precio = precio
         menu.valido_hasta = valido_hasta
 
-        product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
-        productos = Producto.objects.filter(nombre__in=product_names)
+        product_names = [(key.split("nombre_producto-")[1], value) for key, value in request.POST.dict().iteritems()
+                         if key.startswith("nombre_producto-")]
+        for row, name in product_names:
+            producto = Producto.objects.filter(nombre=name)
+            if producto.exists() and producto.count() == 1:
+                MenuProducto.objects.update_or_create(producto=producto[0],
+                                                      menu=menu,
+                                                      quantity=int(request.POST.get('cantidad_producto-%s' % row, '0')))
+
         img = request.FILES.get('upload_field_classic', '')
         if img:
             menu.imagen.save(u'menu-%d.%s' % (menu.id, img.content_type.split('/')[1]), img)
-
-        if productos.exists():
-            menu.productos.add(*list(productos))
 
         menu.save()
 
@@ -743,8 +728,9 @@ def editar_categoria_view(request, categoria_pk):
         return redirect(categoria_view, categoria_pk)
 
 
-# def test_view(request):
-#     return render(request, 'contact.html')
+def test_view(request):
+    return render(request, 'base.html')
+
 
 @login_required
 def ayuda_view(request):
@@ -783,9 +769,8 @@ def buscar_view(request):
 
 @login_required
 def informes_view(request):
-    import matplotlib.pyplot as plt
     from datetime import datetime, timedelta
-    from django.db.models import Sum, Count
+    from cafetering_app.utiles.reports import generate_pie_chart, generate_orders_report
 
     td = timedelta(days=300)
     from_date = datetime.now().date() - td
@@ -807,120 +792,10 @@ def informes_view(request):
             estados = [int(request.POST.get('estado_objecto', '1'))]
 
         if request.POST.get('recurso', '') == u'pie_chart':
-            query = Q(pedido__fecha_creacion__range=(from_date, end_date), pedido__estado__in=estado_pedido)
+            generate_pie_chart(from_date, end_date, estado_pedido, estados)
 
-            mps = MenuPedido.objects.filter(query | Q(menu__estado__in=estados)).values(
-                'menu__nombre').annotate(Sum('quantity'))
-            ops = OfertaPedido.objects.filter(query | Q(oferta__estado__in=estados)).values(
-                'oferta__titulo').annotate(Sum('quantity'))
-            pps = ProductoPedido.objects.filter(query | Q(producto__estado__in=estados)).values(
-                'producto__nombre').annotate(Sum('quantity'))
-            cps = ProductoPedido.objects.filter(query | Q(producto__estado__in=estados)).values(
-                'producto__categoria__nombre').annotate(Sum('quantity'))
-
-            if mps:
-                labels = []
-                sizes = []
-                for mp in mps:
-                    labels.append(mp['menu__nombre'])
-                    sizes.append(mp['quantity__sum'])
-
-                plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
-                plt.axis('equal')
-                plt.title('Menus vendidos')
-                plt.savefig('cafetering_app/media/graficos/menupedido.jpg')
-                plt.close()
-
-            if ops:
-                labels = []
-                sizes = []
-                for op in ops:
-                    labels.append(op['oferta__titulo'])
-                    sizes.append(op['quantity__sum'])
-
-                plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
-                plt.axis('equal')
-                plt.title('Ofertas vendidas')
-                plt.savefig('cafetering_app/media/graficos/ofertapedido.jpg')
-                plt.close()
-
-            if pps:
-                labels = []
-                sizes = []
-                for pp in pps:
-                    labels.append(pp['producto__nombre'])
-                    sizes.append(pp['quantity__sum'])
-
-                plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
-                plt.axis('equal')
-                plt.title('Productos vendidos')
-                plt.savefig('cafetering_app/media/graficos/productopedido.jpg')
-                plt.close()
-
-            if cps:
-                labels = []
-                sizes = []
-                for cp in cps:
-                    labels.append(cp['producto__categoria__nombre'])
-                    sizes.append(cp['quantity__sum'])
-                plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
-                plt.axis('equal')
-                plt.title('Ventas por categorias')
-                plt.savefig('cafetering_app/media/graficos/categoriapedido.jpg')
-                plt.close()
         elif request.POST.get('recurso', '') == u'orders':
-            import matplotlib.pyplot as plt
-            import numpy as np
-            from matplotlib.ticker import MaxNLocator
-
-            stats = Pedido.objects.filter(fecha_creacion__range=(from_date, end_date),
-                                          estado__in=estado_pedido).values('estado').annotate(Count('id'))
-            estado_pedido_ord = []
-            data = []
-
-            for stat in stats:
-                estado_pedido_ord.append(stat['estado'])
-                data.append(stat['id__count'])
-
-            np.random.seed(42)
-            ax = plt.subplot(111)
-            width = 0.3
-            bins = map(lambda x: x - width / 2, range(1, len(data) + 1))
-            ax.bar(bins, data, width=width)
-            ax.set_xticks(map(lambda x: x, range(1, len(data) + 1)))
-            ax.set_xticklabels(estado_pedido_ord, rotation=45, rotation_mode="anchor", ha="right")
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.subplots_adjust(bottom=0.15)
-            plt.title('Pedidos por estado')
-            plt.savefig('cafetering_app/media/graficos/pedidosestado.jpg')
-            plt.close()
-
-            estado_pedido_ord = []
-            data = []
-            stats = Pedido.objects.filter(fecha_creacion__range=(from_date, end_date),
-                                          estado__in=estado_pedido).extra(
-                select={'day': "date( fecha_creacion )"}).values('day').annotate(Count('id'))
-
-            for stat in stats:
-                if stat['day'].__class__.__name__ == 'unicode':
-                    estado_pedido_ord.append(datetime.strptime(stat['day'], '%Y-%m-%d').strftime('%d/%m/%y'))
-                else:
-                    estado_pedido_ord.append(stat['day'].strftime('%d/%m/%y'))
-
-                data.append(stat['id__count'])
-
-            np.random.seed(42)
-            ax = plt.subplot(111)
-            # width = 0.3
-            bins = map(lambda x: x - width / 2, range(1, len(data) + 1))
-            ax.bar(bins, data, width=width)
-            ax.set_xticks(map(lambda x: x, range(1, len(data) + 1)))
-            ax.set_xticklabels(estado_pedido_ord, rotation=45, rotation_mode="anchor", ha="right")
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.subplots_adjust(bottom=0.15)
-            plt.title('Pedidos por fecha')
-            plt.savefig('cafetering_app/media/graficos/pedidosporfecha.jpg')
-            plt.close()
+            generate_orders_report(from_date, end_date, estado_pedido)
         else:
             pass
         return render(request, 'informes.html',
@@ -934,6 +809,31 @@ def informes_view(request):
 
 
 @login_required()
+def pedido_preparado_view(request, pedido_pk):
+    obj = get_object_or_404(Pedido, pk=pedido_pk)
+    obj.preparado(by=request.user)
+    obj.save()
+    return redirect(pedidos_view)
+
+
+@login_required()
+def pedido_recogido_view(request, pedido_pk):
+    obj = get_object_or_404(Pedido, pk=pedido_pk)
+    obj.recogido(by=request.user)
+    obj.save()
+    return redirect(pedidos_view)
+
+
+@login_required()
+def pedido_no_recogido_view(request, pedido_pk):
+    obj = get_object_or_404(Pedido, pk=pedido_pk)
+    obj.no_recogido(by=request.user)
+    obj.observaciones = request.POST.get("descripcion", "")
+    obj.save()
+    return redirect(pedidos_view)
+
+
+@login_required()
 def cuenta_view(request):
     user = request.user
     empleado = Empleado.objects.get(user=user)
@@ -943,7 +843,6 @@ def cuenta_view(request):
 
 @login_required()
 def reset_password(request):
-    # user = request.user
     from django.http import JsonResponse
     return JsonResponse({})
 
@@ -997,6 +896,7 @@ def login_view(request):
 def reset_password_view(request):
     return redirect(index)
 
+# from django.contrib.auth.models import User
 # @login_required
 # def register_view(request):
 #     if request.method == 'GET':

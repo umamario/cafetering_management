@@ -59,15 +59,15 @@ function addNewRow() {
     var cell5 = row.insertCell(4);
 
     var element_1 = document.createElement('div');
-    element_1.innerHTML = '<input type="number" disabled="true" name="nombre_producto-' + table.rows.length + '" style="max-width: 74px" id="id_id_producto-' + table.rows.length + '"/>';
+    element_1.innerHTML = '<input type="number" disabled="true" name="id_producto-' + table.rows.length + '" style="max-width: 74px" id="id_id_producto-' + table.rows.length + '"/>';
     cell1.appendChild(element_1);
 
     var element_2 = document.createElement('div');
-    element_2.innerHTML = '<input type="text" class="form-control" onchange="$(this).AutocompleteRemainingFields(' + table.rows.length + ')" onkeyup="$(this).AutocompleteName(' + table.rows.length + ');" name="nombre_producto-' + table.rows.length + '" id="id_nombre_producto-' + table.rows.length + '" autocomplete="on" placeholder="Escriba el nombre">';
+    element_2.innerHTML = '<input type="text" class="form-control" onchange="$(this).AutocompleteRemainingFields(' + table.rows.length + ')" onkeyup="$(this).AutocompleteName(' + table.rows.length + ');" name="nombre_producto-' + table.rows.length + '" id="id_nombre_producto-' + table.rows.length + '" autocomplete="off" placeholder="Escriba el nombre">';
     cell2.appendChild(element_2);
 
     var element_3 = document.createElement('div');
-    element_3.innerHTML = '<input disabled="true" type="text" disabled="true" style="max-width: 51px" name="precio-producto-' + table.rows.length + '" id="precio_id_producto-' + table.rows.length + '"/>€';
+    element_3.innerHTML = '<input disabled="true" type="text" disabled="true" style="max-width: 54px" name="precio-producto-' + table.rows.length + '" id="precio_id_producto-' + table.rows.length + '"/>€';
     cell3.appendChild(element_3);
 
     var element_4 = document.createElement('div');
@@ -75,6 +75,35 @@ function addNewRow() {
     cell4.appendChild(element_4);
 
     var element_5 = document.createElement('div');
+    element_5.innerHTML = '<button type="button" name="trash-row-' + table.rows.length + '" onclick="deleteThisRow(' + table.rows.length + ')" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>';
+    cell5.appendChild(element_5);
+}
+
+function addNewRowProducto() {
+    var table = document.getElementById("order_details").getElementsByTagName('tbody')[0];
+    var row = table.insertRow(table.rows.length);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell4 = row.insertCell(2);
+    var cell5 = row.insertCell(3);
+
+    var element_1 = document.createElement('div');
+    element_1.setAttribute('align', 'center');
+    element_1.innerHTML = '<input type="number" disabled="true" name="id_producto-' + table.rows.length + '" style="max-width: 74px" id="id_id_producto-' + table.rows.length + '"/>';
+    cell1.appendChild(element_1);
+
+    var element_2 = document.createElement('div');
+    element_2.setAttribute('align', 'center');
+    element_2.innerHTML = '<input type="text" class="form-control" onchange="$(this).AutocompleteRemainingFields(' + table.rows.length + ')" onkeyup="$(this).AutocompleteName(' + table.rows.length + ');" name="nombre_producto-' + table.rows.length + '" id="id_nombre_producto-' + table.rows.length + '" autocomplete="off" placeholder="Escriba el nombre">';
+    cell2.appendChild(element_2);
+
+    var element_4 = document.createElement('div');
+    element_4.setAttribute('align', 'center');
+    element_4.innerHTML = '<input type="number" min="1" name="cantidad_producto-' + table.rows.length + '" style="max-width: 23%; padding: 7px 0px" id="id_cantidad_producto-' + table.rows.length + '"/>';
+    cell4.appendChild(element_4);
+
+    var element_5 = document.createElement('div');
+    element_5.setAttribute('align', 'center');
     element_5.innerHTML = '<button type="button" name="trash-row-' + table.rows.length + '" onclick="deleteThisRow(' + table.rows.length + ')" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>';
     cell5.appendChild(element_5);
 }
@@ -89,7 +118,7 @@ function addNewRowPedido() {
     var cell5 = row.insertCell(4);
 
     var element_1 = document.createElement('div');
-    element_1.innerHTML = '<input type="text" class="form-control" onchange="$(this).AutocompleteRemainingFields(' + table.rows.length + ')" onkeyup="$(this).AutocompleteName(' + table.rows.length + ');" name="nombre_producto-' + table.rows.length + '" id="id_nombre_producto-' + table.rows.length + '" autocomplete="on" placeholder="Escriba el nombre">';
+    element_1.innerHTML = '<input type="text" class="form-control" onchange="$(this).AutocompleteRemainingFields(' + table.rows.length + ')" onkeyup="$(this).AutocompleteName(' + table.rows.length + ');" name="nombre_producto-' + table.rows.length + '" id="id_nombre_producto-' + table.rows.length + '" autocomplete="off" placeholder="Escriba el nombre">';
     cell1.appendChild(element_1);
 
     var element_2 = document.createElement('div');
@@ -116,7 +145,7 @@ function setSubtotal(row) {
     }
 }
 
-function addNewRowOferta() {
+function addNewRowOfertaPedida() {
     var table = document.getElementById("oferta_table").getElementsByTagName('tbody')[0];
     var row = table.insertRow(table.rows.length);
 
@@ -166,7 +195,7 @@ function addNewRowAlergeno() {
 
     var element_1 = document.createElement('div');
     // element_1.style.padding = "0px 0px ";
-    element_1.innerHTML = '<input type="text" onkeyup="$(this).AutocompleteAlergeno(' + table.rows.length + ');" style="padding: 0px 0px;" name="nombre_alergeno-' + table.rows.length + '" id="id_nombre_alergeno-' + table.rows.length + '" autocomplete="on" placeholder="Escriba el nombre">';
+    element_1.innerHTML = '<input type="text" onkeyup="$(this).AutocompleteAlergeno(' + table.rows.length + ');" style="padding: 0px 0px;" name="nombre_alergeno-' + table.rows.length + '" id="id_nombre_alergeno-' + table.rows.length + '" autocomplete="off" placeholder="Escriba el nombre">';
     cell1.appendChild(element_1);
 
     var element_2 = document.createElement('div');
@@ -185,7 +214,7 @@ function addNewRowEtiquetas() {
 
     var element_1 = document.createElement('div');
     // element_1.style.padding = "0px 0px ";
-    element_1.innerHTML = '<input type="text" onkeyup="$(this).AutocompleteEtiqueta(' + table.rows.length + ');" style="padding: 0px 0px;" name="nombre_etiquetas-' + table.rows.length + '" id="id_nombre_etiquetas-' + table.rows.length + '" autocomplete="on" placeholder="Escriba el nombre">';
+    element_1.innerHTML = '<input type="text" onkeyup="$(this).AutocompleteEtiqueta(' + table.rows.length + ');" style="padding: 0px 0px;" name="nombre_etiquetas-' + table.rows.length + '" id="id_nombre_etiquetas-' + table.rows.length + '" autocomplete="off" placeholder="Escriba el nombre">';
     cell1.appendChild(element_1);
 
     var element_2 = document.createElement('div');

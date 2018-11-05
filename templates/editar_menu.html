@@ -10,7 +10,7 @@
                         <div class="row">
                             <div class="page-heading-inner heading-group">
                                 <div class="breadcrumb-group">
-                                    <h1 class="hidden">Nuevo Menu</h1>
+                                    <h1 class="hidden">Editar Menu</h1>
                                     <div class="breadcrumb clearfix">
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a
                                                 href="./index" title="Fast Food" itemprop="url"><span
@@ -19,7 +19,7 @@
                                         <span class="arrow-space"></span>
 										<span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
 											<a title="Nuevo menu" itemprop="url"><span
-                                                    itemprop="title">Nuevo menu</span></a>
+                                                    itemprop="title">Editar menu</span></a>
 										</span>
                                     </div>
                                 </div>
@@ -105,29 +105,25 @@
                                                 <table id="order_details">
                                                     <thead>
                                                     <tr>
-                                                        <th style="text-align: center">Producto ID</th>
-                                                        <th style="text-align: center">Nombre</th>
-                                                        <th style="text-align: center">Precio</th>
-                                                        <th style="text-align: center">Precio Oferta</th>
+                                                        <th style="text-align: center">ID</th>
+                                                        <th style="text-align: center">Nombre Producto</th>
+                                                        <th style="text-align: center">Cantidad</th>
                                                         <th style="text-align: center">Acciones</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     {% for producto in productos %}
                                                         <tr id="fila-" class="odd">
-                                                            <td class="td-product">
-                                                                #{{ producto.id }}
+                                                            <td class="td-product" align="center">
+                                                                #{{ producto.producto.id }}
                                                             </td>
-                                                            <td class="td-product">
-                                                                {{ producto.nombre }}
+                                                            <td class="td-product" align="center">
+                                                                {{ producto.producto.nombre }}
                                                             </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio }}€
+                                                            <td class="td-product" align="center">
+                                                                {{ producto.quantity }}
                                                             </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio_oferta }}€
-                                                            </td>
-                                                            <td>
+                                                            <td align="center">
                                                                 <button type="button" name="trash-row-1"
                                                                         onclick="deleteThisRowWithDatabase({{ forloop.counter }}, 'menu', {{ menu.id }})"
                                                                         class="btn btn-default">
@@ -139,10 +135,11 @@
                                                     </tbody>
                                                     <tfoot>
                                                     <tr class="order_summary order_total">
-                                                        <td class="td-label" colspan="4"></td>
-                                                        <td class="total"><span class="money" align="center"
+                                                        <td class="td-label" colspan="3"></td>
+                                                        <td class="total">
+                                                            <span class="money" align="center"
                                                                                 data-currency="EUR">
-                                                            <button type="button" onclick="addNewRow()"
+                                                            <button type="button" onclick="addNewRowProducto()"
                                                                     class="btn btn-default">
                                                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                                             </button>

@@ -30,8 +30,8 @@
             </section>
             <section class="order-layout">
 
-                <button class="btn btn-default" onclick="location.href='/editar-oferta/{{oferta.id}}'"
-                            style="margin:auto; display:block;">Editar Oferta
+                <button class="btn btn-default" onclick="location.href='/editar-oferta/{{ oferta.id }}'"
+                        style="margin:auto; display:block;">Editar Oferta
                 </button>
                 <div class="order-wrapper">
                     <div class="container">
@@ -82,12 +82,17 @@
                                                     <br>
                                                     <label>&nbsp&nbsp&nbsp&nbspVálida Hasta</label>
                                                     <div class="trio">
+
                                                         <input id="trio1" type="text" name="valido_hasta"
                                                                style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
                                                                disabled="disabled"
                                                                class="datepicker"
-                                                               value="{{ oferta.valido_hasta |date:"d M, Y" }}">
-                                                        <input id="trio2" type="number" name="descuento"
+                                                                {% if oferta.valido_hasta %}
+                                                                    value="{{ oferta.valido_hasta |date:"d M, Y" }}">
+                                                                {% else %}
+                                                                    value="No definido">
+                                                                {% endif %}
+                                                        <input id="trio2" type="text" name="descuento"
                                                                style="padding: 5px 0px; text-align: right; width: 119px; background-color:white"
                                                                disabled="disabled"
                                                                 {% if oferta.descuento_porcentual %}
@@ -120,43 +125,45 @@
                                                 <tr>
                                                     <th style="text-align: center">Producto ID</th>
                                                     <th style="text-align: center">Nombre</th>
-                                                    <th style="text-align: center">Precio</th>
+                                                    <th style="text-align: center">Cantidad</th>
                                                     <th style="text-align: center">Precio Oferta</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% for producto in productos %}
-                                                        <tr id="fila-" class="odd">
-                                                            <td class="td-product">
-                                                                #{{ producto.id }}
-                                                            </td>
-                                                            <td class="td-product">
-                                                                {{ producto.nombre }}
-                                                            </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio }}€
-                                                            </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio_oferta }}€
-                                                            </td>
-                                                        </tr>
-                                                    {% endfor %}
+                                                {% for producto in productos %}
+                                                    <tr id="fila-" class="odd">
+                                                        <td class="td-product">
+                                                            #{{ producto.producto.id }}
+                                                        </td>
+                                                        <td class="td-product">
+                                                            {{ producto.producto.nombre }}
+                                                        </td>
+                                                        <td align="center" class="td-product">
+                                                            {{ producto.quantity }}
+                                                        </td>
+                                                        <td class="td-product">
+                                                            {{ producto.precio_oferta }}€
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
                                                 </tbody>
+                                                P
                                                 <tfoot>
-                                                    {% if not productos %}
+                                                {% if not productos %}
                                                     <tr class="order_summary order_total">
                                                         <td class="td-label" colspan="4">Ningún producto seleccionado
                                                         </td>
                                                     </tr>
-                                                    {% endif %}
+                                                {% endif %}
                                                 </tfoot>
                                             </table>
                                         </div>
                                     </div>
                                     <br><br>
-                                    <button class="btn btn-default" onclick="location.href='/eliminar-oferta/{{oferta.id}}'"
-                                                style="margin:auto; display:block;">Eliminar Oferta
-                                        </button>
+                                    <button class="btn btn-default"
+                                            onclick="location.href='/eliminar-oferta/{{ oferta.id }}'"
+                                            style="margin:auto; display:block;">Eliminar Oferta
+                                    </button>
                                 </div>
                             </div>
                         </div>

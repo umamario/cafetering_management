@@ -35,16 +35,6 @@
                             <div class="row">
                                 <div class="order-inner">
                                     <div class="order-content">
-                                        {#									<div class="order-id">#}
-                                        {#										<h2>Order #{{ pedido.id }}</h2>#}
-                                        {#										<span class="date">{{ pedido.fecha_creacion }}</span>#}
-                                        <!--<div id="order-cancelled" class="flash notice">
-                                            <h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
-                                            <span class="note">Reason: customer</span>
-                                        </div>-->
-                                        {#									</div>#}
-                                        {#                                <div id="content1"><button type="button" class="btn btn-default" style="margin:auto; display:block;">Marcar como recogido</button></div>#}
-                                        {#                                <div id="content2"><button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/cancelar-pedido/{{pedido.id}}'">Cancelar pedido</button></div>#}
                                         <div class="order-address">
                                             <div id="order_payment" class="col-md-6 address-items">
                                                 <h2 class="address-title">Imagen</h2>
@@ -114,10 +104,9 @@
                                                 <table id="order_details">
                                                     <thead>
                                                     <tr>
-                                                        <th style="text-align: center">Producto ID</th>
-                                                        <th style="text-align: center">Nombre</th>
-                                                        <th style="text-align: center">Precio</th>
-                                                        <th style="text-align: center">Precio Oferta</th>
+                                                        <th style="text-align: center">ID</th>
+                                                        <th style="text-align: center">Nombre producto</th>
+                                                        <th style="text-align: center">Cantidad</th>
                                                         <th style="text-align: center">Acciones</th>
                                                     </tr>
                                                     </thead>
@@ -126,10 +115,10 @@
                                                     </tbody>
                                                     <tfoot>
                                                     <tr class="order_summary order_total">
-                                                        <td class="td-label" colspan="4"></td>
+                                                        <td class="td-label" colspan="3"></td>
                                                         <td class="total"><span class="money" align="center"
                                                                                 data-currency="EUR">
-                                                            <button type="button" onclick="addNewRow()"
+                                                            <button type="button" onclick="addNewRowProducto()"
                                                                     class="btn btn-default">
                                                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                                             </button>

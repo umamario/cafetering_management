@@ -14,3 +14,4 @@ matplotlib==2.2.3
 # apt-get install python-tk
 # export DISPLAY=:10
 # Xvfb :10 -ac &
+# python manage.py runserver 0.0.0.0:8000 --settings=cafetering_app.prod_settings

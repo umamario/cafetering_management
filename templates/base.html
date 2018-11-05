@@ -56,6 +56,9 @@
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
+  {% load static %}
+    <link href="/static/avgrund/style/avgrund.css" rel="stylesheet" type="text/css" media="all">
+
     {% load static %}
     <script src="{% static 'base.js' %}"></script>
 
@@ -74,6 +77,16 @@
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .black_box {
+            width:500px;
+            height:200px;
+            background:#000;
+            float:left;
+            border:2px solid #000;
+            outline: 1px dashed #fff;
+            outline-offset: -10px;
         }
 
         /* The Modal (background) */
@@ -404,6 +417,11 @@
 
     {% block content %}
     {% endblock %}
+
+{#        <div class="page-container" id="PageContainer">#}
+{#            <main class="main-content" id="MainContent" role="main">#}
+{#            </main>#}
+{#        </div>#}
 
     <!-- Footer -->
     <footer class="footer">

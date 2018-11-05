@@ -83,9 +83,13 @@
                                                         <br>
                                                         <div>
                                                             <input id="content1" type="text" name="valido_hasta"
-                                                                   style="padding: 5px 0px; text-align: center; width: 119px; background-color:white"
+                                                                   style="padding: 5px 0px; text-align: center; width: 141px; background-color:white"
                                                                    class="datepicker" disabled="disabled"
+                                                                   {% if menu.valido_hasta %}
                                                                    value="{{ menu.valido_hasta |date:"d/m/Y" }}"
+                                                                   {% else %}
+                                                                    value="Validez no definida"
+                                                                   {% endif %}
                                                                    placeholder="Valido hasta">
                                                             <div id="content2" class="input-group">
                                                                 <span class="input-group-addon">€</span>
@@ -111,24 +115,24 @@
                                                     <tr>
                                                         <th style="text-align: center">Producto ID</th>
                                                         <th style="text-align: center">Nombre</th>
-                                                        <th style="text-align: center">Precio</th>
-                                                        <th style="text-align: center">Precio Oferta</th>
+                                                        <th style="text-align: center">PVP</th>
+                                                        <th style="text-align: center">Cantidad</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     {% for producto in productos %}
                                                         <tr id="fila-" class="odd">
-                                                            <td class="td-product">
-                                                                #{{ producto.id }}
+                                                            <td class="td-product" align="center">
+                                                                #{{ producto.producto.id }}
                                                             </td>
                                                             <td class="td-product">
-                                                                {{ producto.nombre }}
+                                                                {{ producto.producto.nombre }}
                                                             </td>
                                                             <td class="td-product">
-                                                                {{ producto.precio }}€
+                                                                {{ producto.producto.precio }}€
                                                             </td>
-                                                            <td class="td-product">
-                                                                {{ producto.precio_oferta }}€
+                                                            <td class="td-product" align="center">
+                                                                {{ producto.quantity }}
                                                             </td>
                                                         </tr>
                                                     {% endfor %}

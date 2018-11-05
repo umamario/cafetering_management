@@ -38,7 +38,6 @@ urlpatterns = [
     url(r'^nueva-oferta/?$', views.nueva_oferta_view, name='nueva_oferta_view'),
     url(r'^nuevo-menu/?$', views.nuevo_menu_view, name='nuevo_menu_view'),
     url(r'^nueva-categoria/?$', views.nueva_categoria_view, name='nueva_categoria_view'),
-    url(r'^nuevo-pedido/?$', views.nuevo_pedido_view, name='nueva_pedido_view'),
     url(r'^nuevo-producto/?$', views.nuevo_producto_view, name='nuevo_producto_view'),
 
     url(r'^editar-pedido/(?P<pedido_pk>[0-9]+)/$', views.editar_pedido_view, name='editar_pedido_view'),
@@ -47,11 +46,11 @@ urlpatterns = [
     url(r'^editar-producto/(?P<producto_pk>[0-9]+)/$', views.editar_producto_view, name='editar_producto_view'),
     url(r'^editar-categoria/(?P<categoria_pk>[0-9]+)/$', views.editar_categoria_view, name='editar_categoria_view'),
 
-    url(r'^eliminar-pedido/(?P<pedido_pk>[0-9]+)/$', views.eliminar_pedido_view, name='eliminar_pedido_view'),
-    url(r'^eliminar-oferta/(?P<oferta_pk>[0-9]+)/$', views.eliminar_oferta_view, name='eliminar_oferta_view'),
-    url(r'^eliminar-menu/(?P<menu_pk>[0-9]+)/$', views.eliminar_menu_view, name='eliminar_menu_view'),
-    url(r'^eliminar-producto/(?P<producto_pk>[0-9]+)/$', views.eliminar_producto_view, name='eliminar_producto_view'),
-    url(r'^eliminar-categoria/(?P<categoria_pk>[0-9]+)/$', views.eliminar_categoria_view,
+    url(r'^eliminar-pedido/(?P<pedido_pk>[0-9]+)/?$', views.eliminar_pedido_view, name='eliminar_pedido_view'),
+    url(r'^eliminar-oferta/(?P<oferta_pk>[0-9]+)/?$', views.eliminar_oferta_view, name='eliminar_oferta_view'),
+    url(r'^eliminar-menu/(?P<menu_pk>[0-9]+)/?$', views.eliminar_menu_view, name='eliminar_menu_view'),
+    url(r'^eliminar-producto/(?P<producto_pk>[0-9]+)/?$', views.eliminar_producto_view, name='eliminar_producto_view'),
+    url(r'^eliminar-categoria/(?P<categoria_pk>[0-9]+)/?$', views.eliminar_categoria_view,
         name='eliminar_categoria_view'),
 
     url(r'^ofertas$', views.ofertas_view, name='ofertas_view'),
@@ -63,7 +62,11 @@ urlpatterns = [
     url(r'^informes$', views.informes_view, name='informes_view'),
     url(r'^ayuda$', views.ayuda_view, name='ayuda_view'),
     url(r'^buscar$', views.buscar_view, name='buscar_view'),
-    # url(r'^test$', views.test_view, name='test_view'),
+
+    url(r'^pedido-preparado/(?P<pedido_pk>[0-9]+)/?$', views.pedido_preparado_view, name='pedido_preparado_view'),
+    url(r'^pedido-recogido/(?P<pedido_pk>[0-9]+)/?$', views.pedido_recogido_view, name='pedido_recogido_view'),
+    url(r'^pedido-norecogido/(?P<pedido_pk>[0-9]+)/?$', views.pedido_no_recogido_view, name='pedido_no_recogido_view'),
+    url(r'^test$', views.test_view, name='test_view'),
 
     url(r'^ajax/autocomplete_id_producto/$', views.autocomplete_id_producto, name='autocomplete_id_producto'),
     url(r'^ajax/autocomplete_nombre_producto/$', views.autocomplete_nombre_producto,

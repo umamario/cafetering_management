@@ -34,31 +34,15 @@
                             <div class="row">
                                 <div class="order-inner">
                                     <div class="order-content">
-                                        {#									<div class="order-id">#}
-                                        {#										<h2>Order #{{ pedido.id }}</h2>#}
-                                        {#										<span class="date">{{ pedido.fecha_creacion }}</span>#}
-                                        <!--<div id="order-cancelled" class="flash notice">
-                                            <h5 id="order-cancelled-title">Order Cancelled on <span class="note">19 Sep 06:34</span></h5>
-                                            <span class="note">Reason: customer</span>
-                                        </div>-->
-                                        {#									</div>#}
-                                        {#                                <div id="content1"><button type="button" class="btn btn-default" style="margin:auto; display:block;">Marcar como recogido</button></div>#}
-                                        {#                                <div id="content2"><button type="button" class="btn btn-default" style="margin:auto; display:block;" onclick="location.href='/cancelar-pedido/{{pedido.id}}'">Cancelar pedido</button></div>#}
-                                        <div class="order-address">
+                                     <div class="order-address">
                                             <div id="order_payment" class="col-md-6 address-items">
                                                 <h2 class="address-title">Imagen</h2>
                                                 <div class="address-content">
                                                     <div id="holder"></div>
-                                                    {#                                                <p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>#}
                                                     <p id="upload"><input type="file" name="upload_field_classic"></p>
                                                     <p id="filereader">File API & FileReader API not supported</p>
                                                     <p id="formdata">XHR2's FormData is not supported</p>
-                                                    <p id="progress">XHR2's upload progress isn't supported</p>
-                                                    {#                                                      <p>Upload progress: <progress id="uploadprogress" max="100" value="0">0</progress></p>#}
-                                                    {#                                                <img src="{{ pedido.qr.url }}">#}
-                                                    <div class="address-item">
-                                                        {#                                                        <span class="title">Confirmación</span>#}
-                                                        {#                                                        <span class="content">{{ pedido.codigo_confirmacion }}</span>#}
+                                                    <p id="progress">XHR2's upload progress isn't supported</p>                                                    <div class="address-item">
                                                     </div>
                                                 </div>
                                             </div>
@@ -89,7 +73,7 @@
                                                         <br>
                                                         <div>
                                                             <input id="content1" type="text" name="valido_hasta" style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" class="datepicker" placeholder="Valido hasta">
-                                                            <input id="content2" type="number" name="precio" style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" placeholder="Precio">
+                                                            <input id="content2" onkeypress="return onlyNumbers(event)" type="text" name="precio" style="padding: 5px 0px; text-align: center; width: 119px; background-color:white" placeholder="Precio">
                                                          </div>
                                                         <br>
                                                     </div>
@@ -101,49 +85,20 @@
                                                 <table id="order_details">
                                                     <thead>
                                                     <tr>
-                                                        <th style="text-align: center">Producto ID</th>
-                                                        <th style="text-align: center">Nombre</th>
-                                                        <th style="text-align: center">Precio</th>
-                                                        <th style="text-align: center">Precio Oferta</th>
+                                                        <th style="text-align: center">ID</th>
+                                                        <th style="text-align: center">Nombre producto</th>
+                                                        <th style="text-align: center">Cantidad</th>
                                                         <th style="text-align: center">Acciones</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr id="fila-" class="odd">
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="number" style="max-width: 74px"
-                                                                   name="id-producto-1" id="id_id_producto-1"/>
-                                                        </td>
-                                                        <td class="money">
-                                                            <input type="text" class="form-control"
-                                                                   onchange="$(this).AutocompleteRemainingFields(1)"
-                                                                   onkeyup="$(this).AutocompleteName(1);"
-                                                                   name="nombre_producto-1" id="id_nombre_producto-1"
-                                                                   autocomplete="on" placeholder="Escriba el nombre">
-                                                        </td>
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="text" style="max-width: 51px"
-                                                                   name="precio-producto-1" id="precio_id_producto-1"/>€
-                                                        </td>
-                                                        <td class="td-product">
-                                                            <input disabled="true" type="text" style="max-width: 74px"
-                                                                   name="precio_oferta_producto-1"
-                                                                   id="precio_oferta_id_producto-1"/>€
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" name="trash-row-1"
-                                                                    onclick="deleteThisRow(1)" class="btn btn-default">
-                                                                <span class="glyphicon glyphicon-trash"></span>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
                                                     </tbody>
                                                     <tfoot>
                                                     <tr class="order_summary order_total">
-                                                        <td class="td-label" colspan="4"></td>
+                                                        <td class="td-label" colspan="3"></td>
                                                         <td class="total"><span class="money" align="center"
                                                                                 data-currency="EUR">
-                                                            <button type="button" onclick="addNewRow()"
+                                                            <button type="button" onclick="addNewRowProducto()"
                                                                     class="btn btn-default">
                                                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                                             </button>
@@ -156,7 +111,6 @@
                                         <br><br>
                                         <button class="btn btn-default" type="submit"
                                                 style="margin:auto; display:block;">Guardar
-{#                                                 type="submit" onclick="submitForm()" #}
                                         </button>
                                         <br><br>
                                     </div>

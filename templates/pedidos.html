@@ -105,8 +105,15 @@
                                                                 <span class="glyphicon glyphicon-eye-open"></span>
                                                             </button>
                                                             {% if not pedido.estado|estaCompleto %}
-                                                                 <button type="button" onclick="location.href='/cancelar-pedido/{{pedido.id}}'" class="btn btn-default">
+                                                                 <button type="button" data-name="delete" data-id="{{ pedido.pk }}" class="btn btn-default">
                                                                     <span class="glyphicon glyphicon-trash"></span>
+                                                                </button>
+                                                                 <button type="button" onclick="location.href='/editar-pedido/{{pedido.id}}'" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                                </button>
+{#                                                                <a href="#" id="show">Show it</a>#}
+                                                                 <button type="button" data-name="show" id="{{ pedido.pk }}" data-code="{{ pedido.codigo_confirmacion }}" class="btn btn-default">
+                                                                    <span class="glyphicon glyphicon-thumbs-up"></span> <!-- onclick="location.href='/pedido-preparado/{{pedido.id}}'" -->
                                                                 </button>
                                                             {% endif %}
                                                         </td>
@@ -124,5 +131,76 @@
             </section>
         </main>
     </div>
+
+    {% load static %}
+    <script type="text/javascript" src="/static/avgrund/jquery.avgrund.js"></script>
+
+{#    <script>#}
+{#	$(function() {#}
+{#        var e = $('[data-name="show"]');#}
+{#        e.avgrund({#}
+{#            height: 400,#}
+{#            holderClass: 'custom',#}
+{#            showClose: true,#}
+{#            showCloseText: 'Close',#}
+{#            enableStackAnimation: true,#}
+{#            onBlurContainer: '.container',#}
+{#            template: '<img class="centrar" src="/media/qr/qr-' + e[0].id + '.png"><br><div class="centrar">' + e[0].data-code + '</div>' +#}
+{#            '<div>' +#}
+{#            '<a href="http://github.com/voronianski/jquery.avgrund.js" target="_blank" class="github">Avgrund on Github</a>' +#}
+{#            '<a href="http://twitter.com/voronianski" target="_blank" class="twitter">Twitter</a>' +#}
+{#            '<a href="http://dribbble.com/voronianski" target="_blank" class="dribble">Dribbble</a>' +#}
+{#            '</div>'#}
+{#        });#}
+{#	});#}
+{#	</script>#}
+
+    <script>
+	$(function() {
+        var e = $('*[data-name="show"]');
+        var i;
+        for (i = 0; i < e.length; i++) {
+            bttn = e.eq(i);
+            bttn.avgrund({
+                height: 400,
+                holderClass: 'custom',
+                showClose: true,
+                showCloseText: 'Close',
+                enableStackAnimation: true,
+                onBlurContainer: '.container',
+                template: '<img class="centrar" src="/media/qr/qr-' + bttn.attr('id') + '.png"><br><div align="center" style="font-size: 25px;">Código de Confirmación: ' + bttn.attr('data-code') + '</div>' +
+                '<div>' +
+                '<a href="/pedido-preparado/'+ bttn.attr('id') +'" target="_self" class="github">Preparado</a>' +
+                '<a href="/pedido-recogido/'+ bttn.attr('id') +'" target="_self" class="twitter">Recogido</a>' +
+                '</div>'
+            });
+            }
+	});
+	$(function() {
+        var e = $('*[data-name="delete"]');
+        var csfr = "{% csrf_token %}";
+        var i;
+        var text = '<textarea class="form-control" id="exampleFormControlTextarea1" name="descripcion" placeholder="Escriba la descripción" rows="5" style="font-size: 23px;" maxlength="200"></textarea>';
+        for (i = 0; i < e.length; i++) {
+            bttn = e.eq(i);
+            js0 = 'onclick=\"javascript: form.action=\'/eliminar-pedido/'+ bttn.attr('data-id') + '\';"';
+            js1 = 'onclick=\"javascript: form.action=\'pedido-norecogido/'+ bttn.attr('data-id') + '\';"';
+            bttn.avgrund({
+                height: 400,
+                holderClass: 'custom',
+                showClose: true,
+                showCloseText: 'Close',
+                enableStackAnimation: true,
+                onBlurContainer: '.container',
+                template: '<form method="post" name="form">' + csfr + '<div align="center" style="font-size: 36px;">Comentario</div><br>'+ text +
+                '<div>' +
+                '<button type="submit"' + js0 + 'target="_self" class="github">Eliminar</button>' +
+                '<button type="submit"' + js1 + 'target="_self" class="twitter">No recogido</button>' +
+                '</div></form>'
+            });
+            }
+	});
+	</script>
+
 
 {% endblock content %}

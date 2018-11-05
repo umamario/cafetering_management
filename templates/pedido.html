@@ -93,14 +93,16 @@
                                                         {% endfor %}
                                                     </span>
                                                 </div>
-{#                                                <div class="address-item">#}
-{#                                                    <span class="title">Reseña</span>#}
-{#                                                    {% if pedido.hasResena %}#}
-{#                                                        <span class="content">Recibida</span>#}
-{#                                                    {% else %}#}
-{#                                                        <span class="content">No recibida</span>#}
-{#                                                    {% endif %}#}
-{#                                                </div>#}
+                                                <div class="address-item">
+                                                    <span class="title">Observaciones</span>
+													<span class="content">
+                                                        {% if pedido.observaciones %}
+                                                            <span class="content">{{ pedido.observaciones }}</span>
+                                                        {% else %}
+                                                            <span class="content">Ninguna</span>
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -190,7 +192,7 @@
                                                 {% for producto in productos %}
                                                     <tr class="odd">
                                                         <td class="td-product">
-                                                            <a href="./ver-producto/{{ producto.producto.id }}"
+                                                            <a href="/ver-producto/{{ producto.producto.id }}"
                                                                align="center"
                                                                title="">{{ producto.producto.nombre }}</a>
                                                         </td>
@@ -209,7 +211,7 @@
                                                 {% for menu in menus %}
                                                     <tr class="odd">
                                                         <td class="td-product">
-                                                            <a href="./ver-menu/{{ menu.menu.id }}" align="center"
+                                                            <a href="/ver-menu/{{ menu.menu.id }}" align="center"
                                                                title="">MENU: {{ menu.menu.nombre }}</a>
                                                         </td>
                                                         <td class="sku note" align="center">#{{ menu.menu.id }}</td>
@@ -227,7 +229,7 @@
                                                 {% for oferta in ofertas %}
                                                     <tr class="odd">
                                                         <td class="td-product">
-                                                            <a href="./ver-oferta/{{ oferta.oferta.id }}" align="center"
+                                                            <a href="/ver-oferta/{{ oferta.oferta.id }}" align="center"
                                                                title="">OFERTA: {{ oferta.oferta.titulo }}</a>
                                                         </td>
                                                         <td class="sku note" align="center">#{{ oferta.oferta.id }}</td>
@@ -325,12 +327,12 @@
         // When the user clicks the button, open the modal
         btn.onclick = function () {
             modal.style.display = "block";
-        }
+        };
 
         // When the user clicks on <span> (x), close the modal
         span.onclick = function () {
             modal.style.display = "none";
-        }
+        };
 
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function (event) {

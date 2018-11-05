@@ -45,12 +45,6 @@ class Empleado(models.Model):
                                         default=2)
 
 
-class Feedback(models.Model):
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
-    comentario = models.CharField(max_length=400, null=True, blank=True)
-    fecha_creacion = models.DateTimeField(default=timezone.now)
-
-
 class Etiqueta(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=30)
@@ -78,6 +72,7 @@ class Producto(models.Model):
     precio_oferta = models.FloatField(null=True, blank=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
+    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, null=True)
 
 
 class Categoria(models.Model):
@@ -87,6 +82,7 @@ class Categoria(models.Model):
     productos = models.ManyToManyField(Producto)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     imagen = models.ImageField(upload_to='categoria/', null=True, blank=True)
+    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, null=True)
 
 
 class Resena(models.Model):
@@ -94,7 +90,7 @@ class Resena(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
     comentario = models.CharField(max_length=400, null=True, blank=True)
     calificacion = models.IntegerField(null=True, blank=True)
-    producto = models.OneToOneField(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
 
 class Oferta(models.Model):
@@ -103,20 +99,21 @@ class Oferta(models.Model):
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     descuento_porcentual = models.IntegerField(null=True, blank=True)
     descuento_numerico = models.FloatField(null=True, blank=True)
-    productos = models.ManyToManyField(Producto)
+    productos = models.ManyToManyField(Producto, through='OfertaProducto')
     imagen = models.ImageField(upload_to='oferta/', null=True, blank=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     valido_desde = models.DateTimeField(default=timezone.now)
     valido_hasta = models.DateField(null=True, blank=True)
     precio_oferta = models.FloatField(null=True, blank=True)
+    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, null=True)
 
     def setPrecioOferta(self):
-        for product in self.productos.all():  # It does not work when the offer is created from admin
+        for product in self.ofertaproducto_set.all():
             if self.descuento_porcentual:
-                product.precio_oferta = product.precio * (1 - (float(self.descuento_porcentual) / 100))
+                product.precio_oferta = product.producto.precio * (1 - (float(self.descuento_porcentual) / 100))
             elif self.descuento_numerico:
-                product.precio_oferta = product.precio - (float(self.descuento_numerico) / self.productos.count())
+                product.precio_oferta = 0
             else:
                 raise ValueError('Offer does not have discount set for PRODUCT ID %d' % producto.id)
             product.save()
@@ -135,11 +132,12 @@ class Menu(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=30)
     descripcion = models.CharField(max_length=200, null=True, blank=True)
-    productos = models.ManyToManyField(Producto)
+    productos = models.ManyToManyField(Producto, through='MenuProducto')
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     imagen = models.ImageField(upload_to='menu/', null=True, blank=True)
     precio = models.FloatField(null=True, blank=True)
     valido_hasta = models.DateField(null=True, blank=True)
+    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return "<Menu: %s>" % self.nombre
@@ -163,12 +161,17 @@ class Pedido(models.Model):
     resenas = models.ManyToManyField(Resena, blank=True)
     importe = models.FloatField(null=True, blank=True)
     codigo_confirmacion = models.CharField(unique=True, null=True, blank=True, max_length=10)
+    observaciones = models.CharField(max_length=60, null=True, blank=True)
+    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, null=True)
 
     def set_estado(self, new_estado, user):
         if new_estado == u"Entregado":
             self.recogido(by=user)
+            self.fecha_recogida = timezone.now()
         elif new_estado == u"Cancelado":
             self.cancelar(by=user)
+        elif new_estado == u"En cola":
+            self.en_cola(by=user)
         elif self.estado == u"En cola" and new_estado == u"En proceso":
             self.preparando(by=user)
         elif self.estado == u"En proceso" and new_estado == u"Preparado":
@@ -206,6 +209,7 @@ class Pedido(models.Model):
             total += menu.subtotal
         return total
 
+    @property
     def generate_confirmation_code(self):
         import string
         import random
@@ -240,6 +244,11 @@ class Pedido(models.Model):
             self.qr.save(u'qr-%d.png' % self.id, image_file)
 
     @fsm_log_by
+    @transition(field=estado, source=['*'], target='En cola')
+    def en_cola(self, by=None):
+        pass
+
+    @fsm_log_by
     @transition(field=estado, source=['En cola'], target='En proceso')
     def preparando(self, by=None):
         pass
@@ -254,12 +263,18 @@ class Pedido(models.Model):
     def recogido(self, by=None):
         pass
 
-    @transition(field=estado, source='Preparado', target='No recogido')
+    @fsm_log_by
+    @transition(field=estado, source='*', target='No recogido')
     def no_recogido(self, by=None):
         pass
 
     @fsm_log_by
-    @transition(field=estado, source='En proceso', target='Preparado')
+    @transition(field=estado, source='*', target='Cancelado')
+    def cancelar(self, by=None):
+        pass
+
+    @fsm_log_by
+    @transition(field=estado, source='*', target='Preparado')
     def preparado(self, by=None):
         pass
 
@@ -298,3 +313,20 @@ class OfertaPedido(models.Model):
     @property
     def subtotal(self):
         return self.precio_oferta * self.quantity
+
+
+class OfertaProducto(models.Model):
+    oferta = models.ForeignKey(Oferta, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    precio_oferta = models.FloatField(null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def subtotal(self):
+        return self.precio_oferta * self.quantity
+
+
+class MenuProducto(models.Model):
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
