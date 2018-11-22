@@ -57,12 +57,7 @@
                                                         <td><a href="./order.html" title="">{{ producto.id}}</a></td>
                                                         <td><span>{{ producto.nombre }}</span></td>
                                                         <td><span>
-                                                            {% if producto.precio_oferta %}
-                                                                {{ producto.precio_oferta }}€
-                                                            {% else %}
-                                                                {{ producto.precio }}€
-                                                            {% endif %}
-
+                                                            {{ producto.precio }}€
                                                         </span>
                                                         </td>
                                                         <td><span>{{ producto.get_estado_display }}</span>

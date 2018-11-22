@@ -95,8 +95,7 @@
                                                         <td class="td-note"><span class="note">{{ pedido.estado }}</span></td>
                                                         <td class="td-authorized"><span class="status_voided">{{ pedido.recogida_estimada | date:'d/m/Y h:m'}}</span>
                                                         </td>
-                                                        <td class="td-total"><span class="total"><span class="money"
-                                                                                                       data-currency-usd="$6,277.80">{{ pedido.importe }}€</span></span>
+                                                        <td class="td-total"><span class="total"><span class="money">{{ pedido.importe }}€</span></span>
                                                         </td>
 
 
@@ -111,9 +110,8 @@
                                                                  <button type="button" onclick="location.href='/editar-pedido/{{pedido.id}}'" class="btn btn-default">
                                                                     <span class="glyphicon glyphicon-pencil"></span>
                                                                 </button>
-{#                                                                <a href="#" id="show">Show it</a>#}
                                                                  <button type="button" data-name="show" id="{{ pedido.pk }}" data-code="{{ pedido.codigo_confirmacion }}" class="btn btn-default">
-                                                                    <span class="glyphicon glyphicon-thumbs-up"></span> <!-- onclick="location.href='/pedido-preparado/{{pedido.id}}'" -->
+                                                                    <span class="glyphicon glyphicon-thumbs-up"></span>
                                                                 </button>
                                                             {% endif %}
                                                         </td>
@@ -134,26 +132,6 @@
 
     {% load static %}
     <script type="text/javascript" src="/static/avgrund/jquery.avgrund.js"></script>
-
-{#    <script>#}
-{#	$(function() {#}
-{#        var e = $('[data-name="show"]');#}
-{#        e.avgrund({#}
-{#            height: 400,#}
-{#            holderClass: 'custom',#}
-{#            showClose: true,#}
-{#            showCloseText: 'Close',#}
-{#            enableStackAnimation: true,#}
-{#            onBlurContainer: '.container',#}
-{#            template: '<img class="centrar" src="/media/qr/qr-' + e[0].id + '.png"><br><div class="centrar">' + e[0].data-code + '</div>' +#}
-{#            '<div>' +#}
-{#            '<a href="http://github.com/voronianski/jquery.avgrund.js" target="_blank" class="github">Avgrund on Github</a>' +#}
-{#            '<a href="http://twitter.com/voronianski" target="_blank" class="twitter">Twitter</a>' +#}
-{#            '<a href="http://dribbble.com/voronianski" target="_blank" class="dribble">Dribbble</a>' +#}
-{#            '</div>'#}
-{#        });#}
-{#	});#}
-{#	</script>#}
 
     <script>
 	$(function() {

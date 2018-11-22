@@ -55,26 +55,25 @@ function addNewRow() {
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
+    var cell5 = row.insertCell(3);
 
     var element_1 = document.createElement('div');
+    element_1.setAttribute('align', 'center');
     element_1.innerHTML = '<input type="number" disabled="true" name="id_producto-' + table.rows.length + '" style="max-width: 74px" id="id_id_producto-' + table.rows.length + '"/>';
     cell1.appendChild(element_1);
 
     var element_2 = document.createElement('div');
+    element_2.setAttribute('align', 'center');
     element_2.innerHTML = '<input type="text" class="form-control" onchange="$(this).AutocompleteRemainingFields(' + table.rows.length + ')" onkeyup="$(this).AutocompleteName(' + table.rows.length + ');" name="nombre_producto-' + table.rows.length + '" id="id_nombre_producto-' + table.rows.length + '" autocomplete="off" placeholder="Escriba el nombre">';
     cell2.appendChild(element_2);
 
     var element_3 = document.createElement('div');
+    element_3.setAttribute('align', 'center');
     element_3.innerHTML = '<input disabled="true" type="text" disabled="true" style="max-width: 54px" name="precio-producto-' + table.rows.length + '" id="precio_id_producto-' + table.rows.length + '"/>€';
     cell3.appendChild(element_3);
 
-    var element_4 = document.createElement('div');
-    element_4.innerHTML = '<input disabled="true" type="text" disabled="true" style="max-width: 74px" name="precio_oferta_producto-' + table.rows.length + '" id="precio_oferta_id_producto-' + table.rows.length + '"/>€';
-    cell4.appendChild(element_4);
-
     var element_5 = document.createElement('div');
+    element_5.setAttribute('align', 'center');
     element_5.innerHTML = '<button type="button" name="trash-row-' + table.rows.length + '" onclick="deleteThisRow(' + table.rows.length + ')" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>';
     cell5.appendChild(element_5);
 }

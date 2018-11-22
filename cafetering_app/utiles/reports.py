@@ -2,6 +2,7 @@ from django.db.models import Q
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from django.db.models import Sum, Count
+from bos.models import MenuPedido, ProductoPedido, OfertaPedido, Pedido
 
 
 def generate_pie_chart(from_date, end_date, estado_pedido, estados):
@@ -15,7 +16,6 @@ def generate_pie_chart(from_date, end_date, estado_pedido, estados):
         'producto__nombre').annotate(Sum('quantity'))
     cps = ProductoPedido.objects.filter(query | Q(producto__estado__in=estados)).values(
         'producto__categoria__nombre').annotate(Sum('quantity'))
-
     if mps:
         labels = []
         sizes = []
@@ -111,7 +111,6 @@ def generate_orders_report(from_date, end_date, estado_pedido):
 
     np.random.seed(42)
     ax = plt.subplot(111)
-    # width = 0.3
     bins = map(lambda x: x - width / 2, range(1, len(data) + 1))
     ax.bar(bins, data, width=width)
     ax.set_xticks(map(lambda x: x, range(1, len(data) + 1)))

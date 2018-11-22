@@ -196,7 +196,7 @@ def nueva_oferta_view(request):
         else:
             oferta.descuento_numerico = descuento
 
-        oferta.cafeteria = Empleado.objects.get(user=request.user).cafeteria
+        oferta.cafeteria = Empleado.objects.get(user=request.user).cafeteria.first()
 
         oferta.save()
 
@@ -246,7 +246,7 @@ def nuevo_producto_view(request):
         if img:
             producto.imagen.save(u'producto-%d.%s' % (producto.id, img.content_type.split('/')[1]), img)
 
-        producto.cafeteria = Empleado.objects.get(user=request.user).cafeteria
+        producto.cafeteria = Empleado.objects.get(user=request.user).cafeteria.first()
 
         producto.save()
 
@@ -283,7 +283,7 @@ def nuevo_menu_view(request):
         if img:
             menu.imagen.save(u'menu-%d.%s' % (menu.id, img.content_type.split('/')[1]), img)
 
-        menu.cafeteria = Empleado.objects.get(user=request.user).cafeteria
+        menu.cafeteria = Empleado.objects.get(user=request.user).cafeteria.first()
         menu.save()
 
         return redirect(menus_view)
@@ -297,7 +297,7 @@ def nueva_categoria_view(request):
         titulo = request.POST.get('titulo', '')
         descripcion = request.POST.get('descripcion', '')
         estado = 1 if request.POST.get('estado', '') == u'Activado' else 0
-        cafeteria = Empleado.objects.get(user=request.user).cafeteria
+        cafeteria = Empleado.objects.get(user=request.user).cafeteria.first()
         categoria = Categoria.objects.create(nombre=titulo, descripcion=descripcion, estado=estado, cafeteria=cafeteria)
         product_names = [value for key, value in request.POST.dict().iteritems() if key.startswith("nombre_producto-")]
         productos = Producto.objects.filter(nombre__in=product_names)
@@ -317,11 +317,6 @@ def nueva_categoria_view(request):
 
 @login_required
 def autocomplete_id_producto(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         queryset = Producto.objects.filter(nombre=request.GET.get('search', ''))
@@ -342,11 +337,6 @@ def autocomplete_id_producto(request):
 
 @login_required
 def remove_product_from_list(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         producto = get_object_or_404(Producto, pk=int(request.GET.get('id', '')))
@@ -369,11 +359,6 @@ def remove_product_from_list(request):
 
 @login_required
 def autocomplete_nombre_producto(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         queryset = Producto.objects.filter(nombre__startswith=request.GET.get('search', ''))
@@ -388,11 +373,6 @@ def autocomplete_nombre_producto(request):
 
 @login_required
 def autocomplete_menu_view(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         queryset = Menu.objects.filter(nombre__icontains=request.GET.get('search', ''))
@@ -407,11 +387,6 @@ def autocomplete_menu_view(request):
 
 @login_required
 def autocomplete_oferta_view(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         queryset = Oferta.objects.filter(titulo__icontains=request.GET.get('search', ''))
@@ -426,11 +401,6 @@ def autocomplete_oferta_view(request):
 
 @login_required
 def autocomplete_etiqueta_view(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         queryset = Etiqueta.objects.filter(nombre__icontains=request.GET.get('search', ''))
@@ -445,11 +415,6 @@ def autocomplete_etiqueta_view(request):
 
 @login_required
 def autocomplete_alergeno_view(request):
-    """
-    View used to autocomplete the buy currency field with the corresponding currency symbol
-    :param request:
-    :return: Json response with the matched symbols
-    """
     from django.http import JsonResponse
     if request.is_ajax():
         queryset = Alergeno.objects.filter(nombre__icontains=request.GET.get('search', ''))
@@ -895,21 +860,3 @@ def login_view(request):
 @login_required
 def reset_password_view(request):
     return redirect(index)
-
-# from django.contrib.auth.models import User
-# @login_required
-# def register_view(request):
-#     if request.method == 'GET':
-#         return render(request, 'register.html')
-#     else:
-#         user = User()
-#         user.name = request.POST.get('empleado[first_name]', ' ')
-#         user.last_name = request.POST.get('empleado[last_name]', ' ')
-#         user.email = request.POST.get('empleado[email]', ' ')
-#         user.set_password(request.POST.get('empleado[password]', ' '))
-#         user.save()
-#         empleado = Empleado(name=user.name, apellido=user.last_name,
-#                             user=user)
-#         empleado.save()
-#
-#         return redirect(index)

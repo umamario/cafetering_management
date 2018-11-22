@@ -69,11 +69,13 @@ class Producto(models.Model):
     imagen = models.ImageField(null=True, blank=True, upload_to='productos/')
     etiquetas = models.ManyToManyField(Etiqueta, blank=True)
     alergenos = models.ManyToManyField(Alergeno, blank=True)
-    precio_oferta = models.FloatField(null=True, blank=True)
+    precio_oferta = models.FloatField(null=True, blank=True, default=0.0)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     estado = models.IntegerField(default=0, choices=ESTADO_CHOICES)
     cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, null=True)
 
+    def __str__(self):
+        return "<Producto #%d; %s>" % (self.id, self.nombre)
 
 class Categoria(models.Model):
     id = models.AutoField(primary_key=True)
@@ -223,13 +225,12 @@ class Pedido(models.Model):
         return self.importe_productos + self.importe_ofertas + self.importe_menus
 
     def __str__(self):
-        return "<Pedido #%d ; %s>" % (self.id, self.get_estado_display())
+        return "<Pedido %d; %s>" % (self.id, self.get_estado_display())
 
     def save(self, *args, **kwargs):
         self.importe = self.importe_total
-
         if not self.codigo_confirmacion:
-            self.codigo_confirmacion = self.generate_confirmation_code()
+            self.codigo_confirmacion = self.generate_confirmation_code
 
         super(Pedido, self).save(*args, **kwargs)
 

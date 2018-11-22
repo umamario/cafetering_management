@@ -61,6 +61,15 @@
                                                               </select>
                                                         </span>
                                                     </div>
+                                                    <div class="address-item name">
+                                                        <span class="title">TPM</span>
+
+                                                        <span class="content">
+                                                            <input type="number" min="0" name="tpm"
+                                                               id="tpm" style="padding: 5px 0px; text-align: center; width: 85px; background-color:white"
+                                                               value="0">
+                                                        </span>
+                                                    </div>
                                                     <div class="form-group">
                                                         <label><h4 align="center">Nombre</h4></label>
                                                         <input type="text" name="titulo" class="form-control"
@@ -80,10 +89,9 @@
                                                 <table id="order_details">
                                                     <thead>
                                                     <tr>
-                                                        <th style="text-align: center">Producto ID</th>
-                                                        <th style="text-align: center">Nombre</th>
+                                                        <th style="text-align: center">ID</th>
+                                                        <th style="text-align: center">Nombre del Producto</th>
                                                         <th style="text-align: center">Precio</th>
-                                                        <th style="text-align: center">Precio Oferta</th>
                                                         <th style="text-align: center">Acciones</th>
                                                     </tr>
                                                     </thead>
@@ -91,10 +99,10 @@
                                                     </tbody>
                                                     <tfoot>
                                                     <tr class="order_summary order_total">
-                                                        <td class="td-label" colspan="4"></td>
+                                                        <td class="td-label" colspan="3"></td>
                                                         <td class="total"><span class="money" align="center"
                                                                                 data-currency="EUR">
-                                                            <button type="button" onclick="addNewRow()"
+                                                            <button type="button" onclick="addNewRowProducto()"
                                                                     class="btn btn-default">
                                                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                                             </button>
