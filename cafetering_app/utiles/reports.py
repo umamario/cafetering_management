@@ -27,7 +27,7 @@ def generate_pie_chart(from_date, end_date, estado_pedido, estados):
         plt.axis('equal')
         plt.title('Menus vendidos')
         plt.savefig('cafetering_app/media/graficos/menupedido.jpg')
-        plt.close()
+        plt.close('all')
 
     if ops:
         labels = []
@@ -40,7 +40,7 @@ def generate_pie_chart(from_date, end_date, estado_pedido, estados):
         plt.axis('equal')
         plt.title('Ofertas vendidas')
         plt.savefig('cafetering_app/media/graficos/ofertapedido.jpg')
-        plt.close()
+        plt.close('all')
 
     if pps:
         labels = []
@@ -53,7 +53,7 @@ def generate_pie_chart(from_date, end_date, estado_pedido, estados):
         plt.axis('equal')
         plt.title('Productos vendidos')
         plt.savefig('cafetering_app/media/graficos/productopedido.jpg')
-        plt.close()
+        plt.close('all')
 
     if cps:
         labels = []
@@ -65,7 +65,7 @@ def generate_pie_chart(from_date, end_date, estado_pedido, estados):
         plt.axis('equal')
         plt.title('Ventas por categorias')
         plt.savefig('cafetering_app/media/graficos/categoriapedido.jpg')
-        plt.close()
+        plt.close('all')
 
 
 def generate_orders_report(from_date, end_date, estado_pedido):
@@ -93,7 +93,7 @@ def generate_orders_report(from_date, end_date, estado_pedido):
     plt.subplots_adjust(bottom=0.15)
     plt.title('Pedidos por estado')
     plt.savefig('cafetering_app/media/graficos/pedidosestado.jpg')
-    plt.close()
+    plt.close('all')
 
     estado_pedido_ord = []
     data = []
@@ -119,4 +119,4 @@ def generate_orders_report(from_date, end_date, estado_pedido):
     plt.subplots_adjust(bottom=0.15)
     plt.title('Pedidos por fecha')
     plt.savefig('cafetering_app/media/graficos/pedidosporfecha.jpg')
-    plt.close()
+    plt.close('all')
